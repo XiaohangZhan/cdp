@@ -9,3 +9,4 @@ output*
 .ipynb_checkpoints
 working
 ms1m_split1
+source.sh
