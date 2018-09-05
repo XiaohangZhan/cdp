@@ -1,5 +1,5 @@
 # Graph Toolbox.
-# By Xiaohang Zhan (zhanxiaohang@sensetime.com)
+# By Xiaohang Zhan (xiaohangzhan@outlook.com)
 
 import pdb
 import pickle
