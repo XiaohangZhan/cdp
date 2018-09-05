@@ -1,0 +1,9 @@
+*.swp
+*.pyc
+__pycache__
+*.tar
+*.bin
+*.npy
+output*
+*.pkl
+.ipynb_checkpoints
