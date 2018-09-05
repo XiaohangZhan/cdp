@@ -25,6 +25,7 @@ mkdir data/data_name/features
 ln -s /somewhere/feature.bin data/your_data/features/resnet18.bin # for example
 ```
 Although CDP can handle single-model case, we recommend more than one models to obtain better performance.
+
 3. Prepare the config file. Please refer to the examples in `experiments/`
 
 ### Usage
