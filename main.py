@@ -1,7 +1,7 @@
 import yaml
 import argparse
-from knn import create_knn
-from cdp import cdp
+from source.knn import create_knn
+from source.cdp import cdp
 
 def main():
     parser = argparse.ArgumentParser(description="CDP")

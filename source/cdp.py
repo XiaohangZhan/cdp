@@ -3,9 +3,9 @@ import os
 import pdb
 import sys
 import time
-import graph
+from . import graph
 import pickle
-import eval_cluster
+from . import eval_cluster
 
 def get_hist(cmt):
     cmt = [idx for c in cmt for idx in c]

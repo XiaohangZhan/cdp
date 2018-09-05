@@ -13,8 +13,8 @@ vote:
     threshold: 0.3 # usual range: [0.3, 0.8], lower threshold --> higher recall and lower prec
 mediator:
     threshold: 0.96
-    pair_file: 
-    pair_pred_file:
+    pair_file: /path/to/pair.npy
+    pair_pred_file: /path/to/prediction.py
 propagation:
     max_sz: 1000 # maximal number of images in a class
     step: 0.05 # step to increase threshold, usually dont need to adjust
