@@ -8,5 +8,4 @@ output*
 *.pkl
 .ipynb_checkpoints
 working
-*.txt
 ms1m_split1
