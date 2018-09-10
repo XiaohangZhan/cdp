@@ -6,6 +6,7 @@ import time
 from . import graph
 import pickle
 from . import eval_cluster
+from .create_pair_set import create
 
 def get_hist(cmt):
     cmt = [idx for c in cmt for idx in c]
@@ -100,7 +101,13 @@ def cdp(args):
     if args.strategy == 'vote':
         pairs, scores = vote(output_cdp, args)
     else:
-        pairs, scores == mediator(args)
+        if args.mediator['phase'] == 'train':
+            if not os.path.isfile(output_cdp + "/mediator_input.npy") or not os.path.isfile(output_cdp + "/pair_label.npy"):
+                create(exp_root + "/output", args)
+            train_mediator(args)
+            return
+        else:
+            pairs, scores = mediator(exp_root + "/output", args)
     print("pair num: {}".format(len(pairs)))
 
     # propagation
@@ -187,14 +194,16 @@ def vote(output, args):
         scores = np.load(output + '/vote_scores.npy')
     return pairs, scores
 
-def mediator(args):
-    raw_pairs = np.load(args.mediator['pair_file'])
-    pair_pred = np.load(args.mediator['pair_pred_file'])
-    sel = np.where((pair_pred > args.mediator['threshold']) & (raw_pairs[:,0] != raw_pairs[:,1]))[0]
+def mediator(output, args):
+    if not os.path.isfile(output + "/mediator_input.npy"):
+        create(output, args)
+    if not os.path.isfile(output + "/pairs_pred.npy"):
+        test_mediator(args)
+    raw_pairs = np.load(output + "/pairs.npy")
+    pair_pred = np.load(output + "/pairs_pred.npy")
+    sel = np.where(pair_pred > args.mediator['threshold'])[0]
     pairs = raw_pairs[sel, :]
     scores = pair_pred[sel]
-    pairs, unique_idx = np.unique(np.sort(pairs, axis=1), return_index=True, axis=0)
-    scores = scores[unique_idx]
     return pairs, scores
 
 def groundtruth(args):

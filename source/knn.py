@@ -16,8 +16,9 @@ def knn_nmslib(feats, m, k, output_dir):
         neighbours = index.knnQueryBatch(feats, k=k, num_threads=48)
         with open(fn, 'wb') as f:
             pickle.dump(neighbours, f)
+        print("\n")
     else:
-        print("\nKNN file already exists: {}".format(fn))
+        print("KNN file already exists: {}".format(fn))
 
 def get_hist(topk):
     hist = {}
@@ -41,9 +42,6 @@ def create_knn(args):
     members = args.committee + [args.base]
     output_dir = 'data/{}/knn/'.format(args.data_name)
 
-    #if all([os.path.isfile(output_dir + '/' + m + '.pkl') for m in members]):
-    #    print('KNN files already exist in: {}'.format(output_dir))
-    #    return
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
 

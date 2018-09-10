@@ -1,5 +1,8 @@
 # Implementation of "Consensus-Driven Propagation in Massive Unlabeled Data for Face Recognition" (CDP)
 
+### Notice
+<span style="color:blue">Modules for "Mediator" will be released soon.</span>
+
 ### Paper
 
 Xiaohang Zhan, Ziwei Liu, Junjie Yan, Dahua Lin, Chen Change Loy, ["Consensus-Driven Propagation in Massive Unlabeled Data for Face Recognition"](http://openaccess.thecvf.com/content_ECCV_2018/papers/Xiaohang_Zhan_Consensus-Driven_Propagation_in_ECCV_2018_paper.pdf), ECCV 2018
