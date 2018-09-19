@@ -7,6 +7,7 @@ from . import graph
 import pickle
 from . import eval_cluster
 from .create_pair_set import create
+from .mediator import train_mediator, test_mediator
 
 def get_hist(cmt):
     cmt = [idx for c in cmt for idx in c]
