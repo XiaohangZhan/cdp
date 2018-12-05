@@ -1,13 +1,12 @@
 
 # unadjustable parameters (if need modificaiton, create a new experiment folder along with a new config file)
-base: "resnet101"
-#committee: ['resnet50', 'resnet101', 'densenet121', 'ir'] # list of strings, note that the name should be consistent with your feature file names.
-committee: []
-k: 20
-data_name: "labeled/emore40"
+base: "nas"
+committee: [] # list of strings, note that the name should be consistent with your feature file names.
+data_name: "unlabeled/emore_u200k"
 feat_dim: 256
 
 # adjustable paramters
+k: 20
 strategy: vote # vote or mediator
 vote:
     accept_num: 0 # <= len(committee), not applicable if len(committee) == 0
