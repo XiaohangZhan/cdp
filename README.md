@@ -1,7 +1,9 @@
 # Implementation of "Consensus-Driven Propagation in Massive Unlabeled Data for Face Recognition" (CDP)
 
 ### Notice
-<span style="color:red">**Modules for "Mediator" will be released soon.**</span>
+<span style="color:red">Modules for "Mediator" will be released after CVPR deadline.</span>
+
+<span style="color:red">A multi-task face recognition framework based on PyTorch will be released after CVPR deadline.</span>
 
 ### Paper
 
