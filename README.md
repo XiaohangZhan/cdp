@@ -36,7 +36,9 @@ Multi-model voting case (using ready-made data):
 ```
 python -u main.py --config experiments/emore_u200k_vote4/config.yaml
 ```
-### Results
+The results are stored in `experiments/*/output/`
+
+### Evaluation Results
 * data: emore_u200k
 
 | k=20  | th0.6               | th0.65              | th0.7               |
