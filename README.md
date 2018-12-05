@@ -36,6 +36,14 @@ Multi-model voting case (using ready-made data):
 ```
 python -u main.py --config experiments/emore_u200k_vote4/config.yaml
 ```
+### Results
+
+| data: emore_u200k | th0.6               | th0.65              | th0.7               |
+|-------------------|---------------------|---------------------|---------------------|
+| vote0             | 0.563, 0.965, 0.711 | 0.734, 0.964, 0.833 | 0.958, 0.910, 0.933 |
+| vote4             | 0.830, 0.980, 0.899 | 0.931, 0.959, 0.945 | 0.991, 0.895, 0.941 |
+
+note: (precision, recall, fscore) in each cell.
 
 ### Bibtex
 ```
