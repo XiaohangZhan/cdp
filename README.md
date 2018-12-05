@@ -19,28 +19,24 @@ pip install nmslib
 ```
 
 ### Before Start
-1. Prepare your data list. If you want to evaluate the performance of CDP, copy the meta file as well. The example of `list.txt` and `meta.txt` can be found in `data/example_data/`.
+1. Prepare your data list. If you want to evaluate the performance of CDP, copy the meta file as well. You can also download the ready-made data [here](https://drive.google.com/open?id=1Pke9zLf8f4TCzurp7DA17MhJbE5UD5Zl) to the repo root and unzip it.
 ```
-mkdir data/your_data
-cp /somewhere/list_file data/your_data/list.txt
-cp /somewhere/meta_file data/your_data/meta.txt # optional
+unzip data.zip
 ```
-2. Prepare your feature files. Extract face features corresponding to the `list.txt` with your trained face models, and save it as binary files via `feature.tofile("xxx.bin")` in numpy. Finally link them to `data/data_name/features/model_name.bin`.
-```
-mkdir data/data_name/features
-ln -s /somewhere/feature.bin data/your_data/features/resnet18.bin # for example
-```
+2. Prepare your feature files. Extract face features corresponding to the `list.txt` with your trained face models, and save it as binary files via `feature.tofile("xxx.bin")` in numpy. Finally link them to `data/unlabeled/data_name/features/model_name.bin`. Besides, you can also use the ready-made features in `data/unlabeled/emore_u200k`.
+
 Although CDP can handle single-model case, we recommend more than one models to obtain better performance.
 
 3. Prepare the config file. Please refer to the examples in `experiments/`
 
 ### Usage
+Single model case (using ready-made data):
 ```
-python -u main.py --config experiments/example_vote/config.yaml
+python -u main.py --config experiments/emore_u200k_vote0/config.yaml
 ```
-or
+Multi-model voting case (using ready-made data):
 ```
-python -u main.py --config experiments/example_mediator/config.yaml
+python -u main.py --config experiments/emore_u200k_vote4/config.yaml
 ```
 
 ### Bibtex
