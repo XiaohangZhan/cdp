@@ -46,7 +46,7 @@ def contingency_matrix(labels_true, labels_pred, eps=None, sparse=False):
     return contingency
 
 
-def fowlkes_mallows_score(labels_true, labels_pred, sparse=False):
+def fscore(labels_true, labels_pred, sparse=False):
     labels_true, labels_pred = check_clusterings(labels_true, labels_pred)
     n_samples, = labels_true.shape
 
@@ -54,4 +54,7 @@ def fowlkes_mallows_score(labels_true, labels_pred, sparse=False):
     tk = np.dot(c.data, c.data) - n_samples
     pk = np.sum(np.asarray(c.sum(axis=0)).ravel() ** 2) - n_samples
     qk = np.sum(np.asarray(c.sum(axis=1)).ravel() ** 2) - n_samples
-    return tk / pk, tk / qk, tk / np.sqrt(pk * qk) if tk != 0. else 0.
+    avg_pre = tk / pk
+    avg_rec = tk / qk
+    fscore = 2. * avg_pre * avg_rec / (avg_pre + avg_rec)
+    return avg_pre, avg_rec, fscore

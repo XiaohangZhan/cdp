@@ -3,6 +3,7 @@ import os
 import pdb
 import sys
 import time
+import json
 from . import graph
 import pickle
 from . import eval_cluster
@@ -56,7 +57,7 @@ def sample(base, committee, vote_num=7, th=0.7):
         for i in range(len(base)):
             hist = get_hist([c[i][0] for c in committee])
             knn = base[i][0]
-            simi = 1.0 - base[i][1]
+            simi = 1.0 - np.array(base[i][1])
             for j, k in enumerate(knn):
                 if k != -1 and k in hist.keys() and hist[k] >= vote_num and k != i and simi[j] > th:
                     pairs.append(sorted([i, k]))
@@ -64,7 +65,7 @@ def sample(base, committee, vote_num=7, th=0.7):
     else:
         for i in range(len(base)):
             knn = base[i][0]
-            simi = 1.0 - base[i][1]
+            simi = 1.0 - np.array(base[i][1])
             for j,k in enumerate(knn):
                 if k != -1 and k != i and simi[j] > th:
                     pairs.append(sorted([i, k]))
@@ -77,6 +78,7 @@ def sample(base, committee, vote_num=7, th=0.7):
 
 def cdp(args):
     exp_root = os.path.dirname(args.config)
+    setattr(args, 'exp_root', exp_root)
 
     with open("data/{}/list.txt".format(args.data_name), 'r') as f:
         fns = f.readlines()
@@ -175,16 +177,17 @@ def cdp(args):
 
 def vote(output, args):
     assert args.vote['accept_num'] <= len(args.committee)
-    base_knn_fn = 'data/{}/knn/{}.pkl'.format(args.data_name, args.base)
-    committee_knn_fn = ['data/{}/knn/{}.pkl'.format(args.data_name, cmt) for cmt in args.committee]
+    base_knn_fn = 'data/{}/knn/{}_k{}.json'.format(args.data_name, args.base, args.k)
+    committee_knn_fn = ['data/{}/knn/{}_k{}.json'.format(args.data_name, cmt, args.k) for cmt in args.committee]
     if not os.path.isfile(output + '/vote_pairs.npy'):
         print('Extracting pairs by voting ...')
-        with open(base_knn_fn, 'rb') as f:
-            knn_base = pickle.load(f)
+        with open(base_knn_fn, 'r') as f:
+            #knn_base = pickle.load(f)
+            knn_base = json.load(f)
         knn_committee = []
         for i,cfn in enumerate(committee_knn_fn):
-            with open(cfn, 'rb') as f:
-                knn_cmt = pickle.load(f)
+            with open(cfn, 'r') as f:
+                knn_cmt = json.load(f)
                 knn_committee.append(knn_cmt)
         pairs, scores = sample(knn_base, knn_committee, vote_num=args.vote['accept_num'], th=args.vote['threshold'])
         np.save(output + '/vote_pairs.npy', pairs)
@@ -217,5 +220,5 @@ def groundtruth(args):
     return pairs, scores
 
 def evaluate_cluster(label, pred):
-    prec, recall, fmi = eval_cluster.fowlkes_mallows_score(label, pred)
-    print('prec: {}, recall: {}, fmi: {}'.format(prec, recall, fmi))
+    prec, recall, fscore = eval_cluster.fscore(label, pred)
+    print('prec: {}, recall: {}, fscore: {}'.format(prec, recall, fscore))
