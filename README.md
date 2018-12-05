@@ -25,9 +25,7 @@ unzip data.zip
 ```
 2. Prepare your feature files. Extract face features corresponding to the `list.txt` with your trained face models, and save it as binary files via `feature.tofile("xxx.bin")` in numpy. Finally link them to `data/unlabeled/data_name/features/model_name.bin`. Besides, you can also use the ready-made features in `data/unlabeled/emore_u200k`.
 
-Although CDP can handle single-model case, we recommend more than one models to obtain better performance.
-
-3. Prepare the config file. Please refer to the examples in `experiments/`
+3. Prepare the config file. Please refer to the examples in `experiments/` or directly use `experiments/emore_u200k_vote*/config.yaml`
 
 ### Usage
 Single model case (using ready-made data):
