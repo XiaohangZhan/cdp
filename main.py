@@ -2,8 +2,10 @@ import yaml
 import os
 import argparse
 import logging
+import datetime
 from source.knn import create_knn
 from source.cdp import cdp
+from source.utils import log
 
 def main():
     parser = argparse.ArgumentParser(description="CDP")
@@ -15,10 +17,17 @@ def main():
     for k,v in config.items():
         setattr(args, k, v)
 
-    log_path = "{}/output/log.txt".format(os.path.dirname(args.config))
+    log_path = "{}/output/log/log-{}{:02d}-{:02d}_{:02d}:{:02d}:{:02d}.txt".format(
+        os.path.dirname(args.config), 
+        datetime.today().year, datetime.today().month, datetime.today().day,
+        datetime.today().hour, datetime.today().minute, datetime.today().second)
     if not os.path.isdir(os.path.dirname(log_path)):
         os.makedirs(os.path.dirname(log_path))
-    logging.basicConfig(filename=log_path)
+    logging.basicConfig(filename=log_path, level=logging.INFO)
+
+    with open(args.config, 'r') as f:
+        config_str = f.read()
+    log(config_str)
 
     assert isinstance(args.committee, list), "committee should be a list of strings"
 
