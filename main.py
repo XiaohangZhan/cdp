@@ -2,7 +2,7 @@ import yaml
 import os
 import argparse
 import logging
-import datetime
+from datetime import datetime
 from source.knn import create_knn
 from source.cdp import cdp
 from source.utils import log

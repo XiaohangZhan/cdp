@@ -36,6 +36,10 @@ Multi-model voting case (using ready-made data):
 ```
 python -u main.py --config experiments/emore_u200k_vote4/config.yaml
 ```
+Multi-model mediator case (using ready-made data):
+```
+python -u main.py --config experiments/emore_u200k_mediator/config.yaml
+```
 The results are stored in `experiments/*/output/`
 
 ### Evaluation Results
