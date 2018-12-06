@@ -8,7 +8,8 @@ from . import graph
 import pickle
 from . import eval_cluster
 from .create_pair_set import create
-from .mediator import train_mediator, test_mediator
+from .mediator import Mediator
+from .utils import log
 
 def get_hist(cmt):
     cmt = [idx for c in cmt for idx in c]
@@ -85,17 +86,17 @@ def cdp(args):
     args.total_num = len(fns)
 
     if args.strategy == "vote":
-        output_cdp = '{}/output/{}_accept{}_th{}'.format(exp_root, args.strategy, args.vote['accept_num'], args.vote['threshold'])
+        output_cdp = '{}/output/k{}_{}_accept{}_th{}'.format(exp_root, args.k, args.strategy, args.vote['accept_num'], args.vote['threshold'])
     elif args.strategy == "mediator":
-        output_cdp = '{}/output/{}_th{}'.format(exp_root, args.strategy, args.mediator['threshold'])
+        output_cdp = '{}/output/k{}_{}_th{}'.format(exp_root, args.k, args.strategy, args.mediator['threshold'])
+    elif args.strategy == 'groundtruth':
+        output_cdp = '{}/output/gt'.format(exp_root)
     else:
         raise Exception('No such strategy: {}'.format(args.strategy))
 
     output_sub = '{}/sz{}_step{}'.format(output_cdp, args.propagation['max_sz'], args.propagation['step'])
-    print('Output folder: {}'.format(output_sub))
-    outcdp = output_sub + '/cdp.pkl'
+    log('Output folder: {}'.format(output_sub))
     outpred = output_sub + '/pred.npy'
-    outlist = '{}/list.txt'.format(output_sub)
     outmeta = '{}/meta.txt'.format(output_sub)
     if not os.path.isdir(output_sub):
         os.makedirs(output_sub)
@@ -103,52 +104,41 @@ def cdp(args):
     # pair selection
     if args.strategy == 'vote':
         pairs, scores = vote(output_cdp, args)
+    elif args.strategy == 'mediator':
+        pairs, scores = mediator(args)
     else:
-        if args.mediator['phase'] == 'train':
-            if not os.path.isfile(output_cdp + "/mediator_input.npy") or not os.path.isfile(output_cdp + "/pair_label.npy"):
-                create(exp_root + "/output", args)
-            train_mediator(args)
-            return
-        else:
-            pairs, scores = mediator(exp_root + "/output", args)
-    print("pair num: {}".format(len(pairs)))
+        pairs, scores = groundtruth(args)
+    log("pair num: {}".format(len(pairs)))
 
     # propagation
-    if not os.path.isfile(outcdp):
-        print("Propagation ...")
-        comps = graph.graph_propagation(pairs, scores, args.propagation['max_sz'], args.propagation['step'])
-        cdp_res = []
-        for c in comps:
-            cdp_res.append(sorted([n.name for n in c]))
-        pred = -1 * np.ones(args.total_num, dtype=np.int)
-        for i,c in enumerate(cdp_res):
-            pred[np.array(c)] = i
-        # save
-        with open(outcdp, 'wb') as f:
-            pickle.dump(cdp_res, f)
-        np.save(outpred, pred)
-    else:
-        print('Loading CDP results ...')
-        with open(outcdp, 'rb') as f:
-            cdp_res = pickle.load(f)
-        pred = np.load(outpred)
+    log("Propagation ...")
+    components = graph.graph_propagation(pairs, scores, args.propagation['max_sz'], args.propagation['step'])
 
-    # analyse results
-    print("\n------------- Analysis --------------")
-    nodes = np.unique(np.array([nn for cc in cdp_res for nn in cc]))
-    print('num_nodes: {}\tnum_class: {}\tnum_per_class: {}'.format(nodes.shape[0], len(cdp_res), nodes.shape[0] / float(len(cdp_res))))
-    num_per_class = np.array([len(c) for c in cdp_res])
-    hist = np.bincount(num_per_class)
-    print("image number of the largest class: {}".format(num_per_class.max()))
-    print("the number of classes whose contain 1,2,...,20 images: {}".format(hist[:20]))
+    # collect results
+    cdp_res = []
+    for c in components:
+        cdp_res.append(sorted([n.name for n in c]))
+    pred = -1 * np.ones(args.total_num, dtype=np.int)
+    for i,c in enumerate(cdp_res):
+        pred[np.array(c)] = i
 
     valid = np.where(pred != -1)
-    print("Discard ratio: {}".format(1 - len(valid[0]) / float(len(pred))))
-    pred_unique = np.unique(pred[valid])
+    _, unique_idx = np.unique(pred[valid], return_index=True)
+    pred_unique = pred[valid][np.sort(unique_idx)]
     pred_mapping = dict(zip(list(pred_unique), range(pred_unique.shape[0])))
+    pred_mapping[-1] = -1
+    pred = np.array([pred_mapping[p] for p in pred])
+    np.save(outpred, pred)
+
+    # analyse results
+    num_valid = len(valid[0])
+    num_class = len(pred_unique)
+    log("\n------------- Analysis --------------")
+    log('num_images: {}\tnum_class: {}\tnum_per_class: {:.2g}'.format(num_valid, num_class, num_valid/float(num_class)))
+    log("Discard ratio: {:.4g}".format(1 - num_valid / float(len(pred))))
 
     # evaluate
-    print("\n------------- Evaluation --------------")
+    log("\n------------- Evaluation --------------")
     if args.evaluation:
         if not os.path.isfile("data/{}/meta.txt".format(args.data_name)):
             raise Exception("Meta file not exist: {}".format("data/{}/meta.txt".format(args.data_name)))
@@ -157,22 +147,20 @@ def cdp(args):
             label = np.array([int(l.strip()) for l in label])
 
         # pair evaluation
-        print("Pair accuracy: {}".format((label[pairs[:,0]] == label[pairs[:,1]]).sum() / float(len(pairs))))
+        log("Pair accuracy: {:.4g}".format((label[pairs[:,0]] == label[pairs[:,1]]).sum() / float(len(pairs))))
 
         # clustering evaluation
-        evaluate_cluster(label[valid], np.array([pred_mapping[pred[v]] for v in valid[0]]))
+        pred_with_singular = pred.copy()
+        pred_with_singular[np.where(pred == -1)] = np.arange(num_class, num_class + (pred == -1).sum())
+        log('(singular removed) prec / recall / fscore: {:.4g}, {:.4g}, {:.4g}'.format(*eval_cluster.fscore(label[valid], pred[valid])))
+        log('(singular kept) prec / recall / fscore: {:.4g}, {:.4g}, {:.4g}'.format(*eval_cluster.fscore(label, pred_with_singular)))
 
     # write to list
-    new_fns = [fns[v] for v in valid[0]]
-    new_label = ['{}\n'.format(pred_mapping[pred[v]]) for v in valid[0]]
-    if not os.path.isdir(os.path.dirname(outlist)):
-        os.makedirs(os.path.dirname(outlist))
-    print('Writing to: {}'.format(outlist))
-    print('Writing to: {}'.format(outmeta))
-    with open(outlist, 'w') as f:
-        f.writelines(new_fns)
+    new_label = ['{}\n'.format(p) for p in pred]
+    if not os.path.isdir(os.path.dirname(outmeta)):
+        os.makedirs(os.path.dirname(outmeta))
+    log('Writing to: {}'.format(outmeta))
     with open(outmeta, 'w') as f:
-        f.write('{} {}\n'.format(len(new_label), len(cdp_res)))
         f.writelines(new_label)
 
 def vote(output, args):
@@ -180,7 +168,7 @@ def vote(output, args):
     base_knn_fn = 'data/{}/knn/{}_k{}.json'.format(args.data_name, args.base, args.k)
     committee_knn_fn = ['data/{}/knn/{}_k{}.json'.format(args.data_name, cmt, args.k) for cmt in args.committee]
     if not os.path.isfile(output + '/vote_pairs.npy'):
-        print('Extracting pairs by voting ...')
+        log('Extracting pairs by voting ...')
         with open(base_knn_fn, 'r') as f:
             #knn_base = pickle.load(f)
             knn_base = json.load(f)
@@ -193,32 +181,45 @@ def vote(output, args):
         np.save(output + '/vote_pairs.npy', pairs)
         np.save(output + '/vote_scores.npy', scores)
     else:
-        print('Loading pairs by voting ...')
+        log('Loading pairs by voting ...')
         pairs = np.load(output + '/vote_pairs.npy')
         scores = np.load(output + '/vote_scores.npy')
     return pairs, scores
 
-def mediator(output, args):
-    if not os.path.isfile(output + "/mediator_input.npy"):
-        create(output, args)
-    if not os.path.isfile(output + "/pairs_pred.npy"):
-        test_mediator(args)
-    raw_pairs = np.load(output + "/pairs.npy")
-    pair_pred = np.load(output + "/pairs_pred.npy")
+def mediator(args):
+
+    args.mediator['model_name'] = "data/{}/models/k{}_{}{}{}.pth.tar".format(
+        args.mediator['train_data_name'],
+        args.k,
+        int('relationship' in args.mediator['input']),
+        int('affinity' in args.mediator['input']),
+        int('distribution' in args.mediator['input']),
+    )
+    med = Mediator(args)
+    if not os.path.isfile(args.mediator['model_name']) or args.mediator['force_retrain']:
+        log("Creating pair set for: labeled")
+        create(args.mediator['train_data_name'], args, phase="train")
+        log("Training")
+        med.train()
+    else:
+        log("Mediator model exists: {}".format(args.mediator['model_name']))
+    
+    log("Creating pair set for: unlabeled")
+    create(args.data_name, args)
+    log("Testing")
+    med.test() 
+    raw_pairs = np.load("{}/output/{}/k{}/pairs.npy".format(args.exp_root, args.data_name, args.k))
+    pair_pred = np.load("{}/output/{}/k{}/pairs_pred.npy".format(args.exp_root, args.data_name, args.k))
     sel = np.where(pair_pred > args.mediator['threshold'])[0]
     pairs = raw_pairs[sel, :]
     scores = pair_pred[sel]
     return pairs, scores
 
 def groundtruth(args):
-    raw_pairs = np.load(args.groundtruth['pair_file'])
-    pair_gt = np.load(args.groundtruth['pair_gt_fn']).astype(np.int)
+    raw_pairs = np.load("{}/output/{}/k{}/pairs.npy".format(args.exp_root, args.data_name, args.k))
+    pair_gt = np.load("{}/output/{}/k{}/pair_label.npy".format(args.exp_root, args.data_name, args.k))
     pairs = raw_pairs[np.where(pair_gt == 1)[0], :]
     pairs = pairs[np.where(pairs[:,0] != pairs[:,1])]
     pairs = np.unique(np.sort(pairs, axis=1), axis=0)
     scores = np.ones((pairs.shape[0]), dtype=np.float32)
     return pairs, scores
-
-def evaluate_cluster(label, pred):
-    prec, recall, fscore = eval_cluster.fscore(label, pred)
-    print('prec: {}, recall: {}, fscore: {}'.format(prec, recall, fscore))

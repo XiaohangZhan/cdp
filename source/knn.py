@@ -1,9 +1,9 @@
-import pickle
 import numpy as np
 import nmslib
 import json
 import multiprocessing
 import os
+from .utils import log
 
 def load_feats(fn, feature_dim=256):
     return np.fromfile(fn, dtype=np.float32).reshape(-1, feature_dim)
@@ -28,20 +28,12 @@ def dump2json(ofn, data, force=False):
     with open(ofn, 'w') as of:
         json.dump(data, of, default=default)
 
-def knn_nmslib(feats, m, k, output_dir):
-    fn = "{}/{}_k{}.json".format(output_dir, m, k)
-    if not os.path.isfile(fn):
-        print("\nSearch KNN for {}".format(m))
-        index = nmslib.init(method='hnsw', space='cosinesimil')
-        index.addDataPointBatch(feats)
-        index.createIndex({'post': 2}, print_progress=True)
-        neighbours = index.knnQueryBatch(feats, k=k, num_threads=multiprocessing.cpu_count())
-        dump2json(fn, neighbours)
-        #with open(fn, 'wb') as f:
-        #    pickle.dump(neighbours, f)
-        print("\n")
-    else:
-        print("KNN file already exists: {}".format(fn))
+def knn_nmslib(feats, k):
+    index = nmslib.init(method='hnsw', space='cosinesimil')
+    index.addDataPointBatch(feats)
+    index.createIndex({'post': 2}, print_progress=True)
+    neighbours = index.knnQueryBatch(feats, k=k, num_threads=multiprocessing.cpu_count())   
+    return neighbours
 
 def get_hist(topk):
     hist = {}
@@ -61,25 +53,32 @@ def fill_array(array, fill, length):
     array2[:array.shape[0]] = array
     return array2
 
-def create_knn(args):
+def create_knn(args, data_name):
     members = [args.base] + args.committee
-    output_dir = 'data/{}/knn/'.format(args.data_name)
+    output_dir = 'data/{}/knn/'.format(data_name)
 
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
 
-    with open("data/{}/list.txt".format(args.data_name), 'r') as f:
+    with open("data/{}/list.txt".format(data_name), 'r') as f:
         fns = f.readlines()
     args.total_num = len(fns)
 
     # check feature files exist
     for m in members:
-        if not os.path.isfile('data/{}/features/{}.bin'.format(args.data_name, m)):
-            raise Exception('Feature file not exist: data/{}/features/{}.bin'.format(args.data_name, m))
+        if not os.path.isfile('data/{}/features/{}.bin'.format(data_name, m)):
+            raise Exception('Feature file not exist: data/{}/features/{}.bin'.format(data_name, m))
 
     # create knn files with nmslib
-    print("KNN Processing")
+    log("KNN Processing for: {}".format(data_name))
     for m in members:
-        feats = load_feats('data/{}/features/{}.bin'.format(args.data_name, m), args.feat_dim)
-        assert feats.shape[0] == args.total_num, "Feature length of [{}] not consistent with list file, {} vs {}".format(m, feats.shape[0], args.total_num)
-        knn_nmslib(feats, m, args.k, output_dir)
+        fn = "{}/{}_k{}.json".format(output_dir, m, args.k)
+        if not os.path.isfile(fn):
+            feats = load_feats('data/{}/features/{}.bin'.format(data_name, m), args.feat_dim)
+            assert feats.shape[0] == args.total_num, "Feature length of [{}] not consistent with list file, {} vs {}".format(m, feats.shape[0], args.total_num)
+            log("\n\tSearch KNN for {}".format(m))
+            neighbours = knn_nmslib(feats, args.k)
+            dump2json(fn, neighbours)
+            log("\n")
+        else:
+            log("\tKNN file already exists: {}".format(fn))

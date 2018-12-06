@@ -57,4 +57,4 @@ def fscore(labels_true, labels_pred, sparse=False):
     avg_pre = tk / pk
     avg_rec = tk / qk
     fscore = 2. * avg_pre * avg_rec / (avg_pre + avg_rec)
-    return avg_pre, avg_rec, fscore
+    return 100 * avg_pre, 100 * avg_rec, 100 * fscore

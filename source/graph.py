@@ -1,10 +1,9 @@
 # Graph Toolbox.
 # By Xiaohang Zhan (xiaohangzhan@outlook.com)
 
-import pdb
-import pickle
 import numpy as np
 import time
+from .utils import log
 
 class Data(object):
     def __init__(self, name):
@@ -136,7 +135,7 @@ def graph_propagation_soft(edges, score, max_sz, step=0.1, **kwargs):
     for i,c in enumerate(components):
         for n in c:
             label_dict[n.name] = i
-    print('Propagation ...')
+    log('Propagation ...')
     prop_vertex = [vertex[idx] for idx in fusion_vertex_idx]
     label, label_fusion = diffusion(prop_vertex, label_dict, score_dict, **kwargs)
     return label, label_fusion
@@ -156,7 +155,7 @@ def diffusion(vertex, label, score_dict, max_depth=5, weight_decay=0.6, normaliz
     start = time.time()
     for root in vertex:
         if prog % prog_step == 0:
-            print("progress: {} / {}, elapsed time: {}".format(prog, len(vertex), time.time() - start))
+            log("progress: {} / {}, elapsed time: {}".format(prog, len(vertex), time.time() - start))
         prog += 1
         #queue = {[root, 0, 1.0]}
         queue = {BFSNode(root, 0, 1.0)}
