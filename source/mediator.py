@@ -12,9 +12,9 @@ import pdb
 class MediatorNet(nn.Module):
     def __init__(self, input_dim):
         super(MediatorNet, self).__init__()
-        self.fc1 = nn.Linear(input_dim, 50)
-        self.fc2 = nn.Linear(50, 50)
-        self.fc_last = nn.Linear(50, 2)
+        self.fc1 = nn.Linear(input_dim, input_dim * 3)
+        self.fc2 = nn.Linear(input_dim * 3, input_dim * 3)
+        self.fc_last = nn.Linear(input_dim * 3, 2)
         self.relu = nn.ReLU()
     def forward(self, x):
         x = self.fc1(x)
@@ -198,7 +198,7 @@ class Mediator(object):
 
         cfg.gpus = args.mediator['gpus']
         cfg.th = args.mediator['threshold']
-        mlp_cfg = {'base_lr': 0.01, 'lr_decay_steps': [2], 'lr_decay_scale': 0.1, 
+        mlp_cfg = {'base_lr': 0.001, 'lr_decay_steps': [2], 'lr_decay_scale': 0.1, 
                 'momentum': 0.9, 'weight_decay': 0.0001, 'batch_size': 1024,
                 'max_epoch': 1, 'average_stats': 200, 'print_freq': 200}
         for k,v in mlp_cfg.items():

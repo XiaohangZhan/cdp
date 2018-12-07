@@ -6,7 +6,7 @@ data_name: "unlabeled/emore_u200k"
 feat_dim: 256
 
 # adjustable paramters
-k: 40
+k: 80
 strategy: mediator # vote or mediator
 mediator:
     force_retrain: False # set to True if you want to retrain the model rather than load it.
@@ -15,7 +15,7 @@ mediator:
     threshold: 0.99
     input: ['relationship', 'affinity']
 propagation:
-    max_sz: 1000 # maximal number of images in a class
+    max_sz: 600 # maximal number of images in a class
     step: 0.05 # step to increase threshold, usually dont need to adjust
 
 evaluation: True
