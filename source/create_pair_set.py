@@ -79,7 +79,7 @@ def create(data_name, args, phase='test'):
         for m in members:
             features.append(np.fromfile('data/{}/features/{}.bin'.format(data_name, m), dtype=np.float32).reshape(-1, args.feat_dim))
 
-    if not os.path.isfile(output + "/pairs.npy"):
+    if not os.path.isfile(output + "/pairs.npy") or not os.path.isfile(output + "/distribution.npy"):
         log("\tLoading base KNN")
         with open('data/{}/knn/{}_k{}.json'.format(data_name, args.base, args.k), 'r') as f:
             knn_base = json.load(f)
@@ -134,7 +134,7 @@ def create(data_name, args, phase='test'):
     if phase == 'train' or args.evaluation:
         if not os.path.isfile(output + "/pair_label.npy"):
             if not os.path.isfile("data/{}/meta.txt".format(data_name)):
-                raise Exception("Meta file not exist: {}".format("data/{}/meta.txt".format(data_name)))
+                raise Exception("Meta file not exist: {}, please create meta.txt or set evaluation to False".format("data/{}/meta.txt".format(data_name)))
             with open("data/{}/meta.txt".format(data_name), 'r') as f:
                 lines = f.readlines()
             log('\tgetting pairs label')

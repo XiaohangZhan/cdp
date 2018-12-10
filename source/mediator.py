@@ -190,7 +190,10 @@ class Mediator(object):
         cfg.trainset_fn = ["data/{}/pairset/k{}/{}.npy".format(args.mediator['train_data_name'], args.k, ip) for ip in args.mediator['input']]
         cfg.trainset_label = "data/{}/pairset/k{}/pair_label.npy".format(args.mediator['train_data_name'], args.k)
         cfg.testset_fn = ["{}/output/pairset/k{}/{}.npy".format(args.exp_root, args.k, ip) for ip in args.mediator['input']]
-        cfg.testset_label = "{}/output/pairset/k{}/pair_label.npy".format(args.exp_root, args.k)
+        if args.evaluation:
+            cfg.testset_label = "{}/output/pairset/k{}/pair_label.npy".format(args.exp_root, args.k)
+        else:
+            cfg.testset_label = None
 
         cfg.test_output = "{}/output/pairset/k{}/pairs_pred.npy".format(args.exp_root, args.k)
 

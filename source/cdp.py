@@ -88,7 +88,14 @@ def cdp(args):
     if args.strategy == "vote":
         output_cdp = '{}/output/k{}_{}_accept{}_th{}'.format(exp_root, args.k, args.strategy, args.vote['accept_num'], args.vote['threshold'])
     elif args.strategy == "mediator":
-        output_cdp = '{}/output/k{}_{}_th{}'.format(exp_root, args.k, args.strategy, args.mediator['threshold'])
+        output_cdp = '{}/output/k{}_{}_{}{}{}_th{}'.format(
+            exp_root, 
+            args.k, 
+            args.strategy, 
+            int('relationship' in args.mediator['input']),
+            int('affinity' in args.mediator['input']),
+            int('distribution' in args.mediator['input']),
+            args.mediator['threshold'])
     elif args.strategy == 'groundtruth':
         output_cdp = '{}/output/gt'.format(exp_root)
     else:
@@ -138,10 +145,10 @@ def cdp(args):
     log("Discard ratio: {:.4g}".format(1 - num_valid / float(len(pred))))
 
     # evaluate
-    log("\n------------- Evaluation --------------")
     if args.evaluation:
+        log("\n------------- Evaluation --------------")
         if not os.path.isfile("data/{}/meta.txt".format(args.data_name)):
-            raise Exception("Meta file not exist: {}".format("data/{}/meta.txt".format(args.data_name)))
+            raise Exception("Meta file not exist: {}, please create meta.txt or set evaluation to False".format("data/{}/meta.txt".format(args.data_name)))
         with open("data/{}/meta.txt".format(args.data_name), 'r') as f:
             label = f.readlines()
             label = np.array([int(l.strip()) for l in label])

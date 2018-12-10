@@ -1,7 +1,7 @@
 # Implementation of "Consensus-Driven Propagation in Massive Unlabeled Data for Face Recognition" (CDP)
 
 ### Notice
-<span style="color:red">Modules for "Mediator" will be released after CVPR deadline.</span>
+<span style="color:red">Code is in continuous updating, please pull before execution.</span>
 
 <span style="color:red">A multi-task face recognition framework based on PyTorch will be released after CVPR deadline.</span>
 
@@ -45,10 +45,17 @@ The results are stored in `experiments/*/output/`
 ### Evaluation Results
 * data: emore_u200k
 
-| k=20  | th0.6               | th0.65              | th0.7               |
-|-------|---------------------|---------------------|---------------------|
-| vote0 | 0.563, 0.965, 0.711 | 0.734, 0.964, 0.833 | 0.958, 0.910, 0.933 |
-| vote4 | 0.830, 0.980, 0.899 | 0.931, 0.959, 0.945 | 0.991, 0.895, 0.941 |
+| k  | strategy | committee | optimal setting                | prec, recall, fscore |
+|----|----------|-----------|--------------------------------|----------------------|
+| 15 | vote     |     0     | accept0_th0.66/sz600_step0.05  | 89.35, 88.98, 89.16  |
+| 15 | vote     |     4     | accept4_th0.605/sz600_step0.05 | 92.87, 92.91, 92.89  |
+| 15 | mediator |     4     | 110_th0.9922/sz600_step0.05    | 94.45, 92.56, 93.49  |
+| 20 | vote     |     0     | accept0_th0.665/sz600_step0.05 | 89.88, 88.16, 89.01  |
+| 20 | vote     |     4     | accept4_th0.625/sz600_step0.05 | 92.23, 92.9, 92.56   |
+| 20 | mediator |     4     | 110_th0.9915/sz600_step0.05    | 92.97, 92.82, 92.9   |
+| 40 | vote     |     0     | accept0_th0.666/sz600_step0.05 | 88.21, 87.84, 88.02  |
+| 40 | vote     |     4     | accept4_th0.649/sz600_step0.05 | 91.4, 91.08, 91.24   |
+| 40 | mediator |     4     | 110_th0.989/sz600_step0.05     | 95.58, 87.93, 91.6   |
 
 note: (precision, recall, fscore) in each cell.
 
