@@ -40,7 +40,7 @@ Multi-model mediator case (using ready-made data):
 ```
 python -u main.py --config experiments/emore_u200k_mediator/config.yaml
 ```
-The results are stored in `experiments/*/output/`
+The results are stored in `experiments/*/output/*/sz*_step*/`, including: `meta.txt` and `pred.npy`.
 
 ### Evaluation Results
 * data: emore_u200k

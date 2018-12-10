@@ -46,8 +46,8 @@ def infer_dim(args):
         dims += len(args.committee)
     if 'affinity' in args.mediator['input']:
         dims += len(args.committee) + 1
-    if 'distribution' in args.mediator['input']:
-        dims += 4 * (len(args.committee) + 1)
+    if 'structure' in args.mediator['input']:
+        dims += len(args.committee) + 1
     return dims
 
 def train(cfg):
@@ -203,7 +203,7 @@ class Mediator(object):
         cfg.th = args.mediator['threshold']
         mlp_cfg = {'base_lr': 0.001, 'lr_decay_steps': [2], 'lr_decay_scale': 0.1, 
                 'momentum': 0.9, 'weight_decay': 0.0001, 'batch_size': 1024,
-                'max_epoch': 1, 'average_stats': 200, 'print_freq': 200}
+                'max_epoch': 2, 'average_stats': 200, 'print_freq': 200}
         for k,v in mlp_cfg.items():
             setattr(cfg, k, v)
 

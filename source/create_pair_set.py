@@ -30,22 +30,15 @@ def get_affinity_feat(features, pairs):
     log('\t\taffinity feature done. time: {}'.format(time.time() - start))
     return np.concatenate(cosine_simi, axis=1)
 
-def get_distribution_feat(members, pairs):
+def get_structure_feat(members, pairs):
     start = time.time()
-    distr_mean = []
-    distr_var = []
+    distr_commnb = []
     for i,m in enumerate(members):
         log("\t\tprocessing: {}/{}".format(i, len(members)))
-        mean0 = np.array([(1.0 - np.array(m[p[0]][1])).mean() for p in pairs])[:,np.newaxis]
-        mean1 = np.array([(1.0 - np.array(m[p[1]][1])).mean() for p in pairs])[:,np.newaxis]
-        var0 = np.array([(1.0 - np.array(m[p[0]][1])).var() for p in pairs])[:,np.newaxis]
-        var1 = np.array([(1.0 - np.array(m[p[1]][1])).var() for p in pairs])[:,np.newaxis]
-        distr_mean.append(mean0)
-        distr_mean.append(mean1)
-        distr_var.append(var0)
-        distr_var.append(var1)
-    log('\t\tdistribution feature done. time: {}'.format(time.time() - start))
-    return np.hstack((np.hstack(distr_mean), np.hstack(distr_var)))
+        comm_neighbor = np.array([len(np.intersect1d(m[p[0]][0], m[p[1]][0], assume_unique=True)) for p in pairs]).astype(np.float32)[:,np.newaxis]
+        distr_commnb.append(comm_neighbor)
+    log('\t\tstructure feature done. time: {}'.format(time.time() - start))
+    return np.hstack(distr_commnb)
 
 def create_pairs(base):
     pairs = []
@@ -79,12 +72,12 @@ def create(data_name, args, phase='test'):
         for m in members:
             features.append(np.fromfile('data/{}/features/{}.bin'.format(data_name, m), dtype=np.float32).reshape(-1, args.feat_dim))
 
-    if not os.path.isfile(output + "/pairs.npy") or not os.path.isfile(output + "/distribution.npy"):
+    if not os.path.isfile(output + "/pairs.npy") or not os.path.isfile(output + "/structure.npy"):
         log("\tLoading base KNN")
         with open('data/{}/knn/{}_k{}.json'.format(data_name, args.base, args.k), 'r') as f:
             knn_base = json.load(f)
     
-        if 'relationship' in args.mediator['input'] or 'distribution' in args.mediator['input']:
+        if 'relationship' in args.mediator['input'] or 'structure' in args.mediator['input']:
             log("\tLoading committee KNN")
             knn_committee = []
             committee_knn_fn = ['data/{}/knn/{}_k{}.json'.format(data_name, cmt, args.k) for cmt in args.committee]
@@ -122,13 +115,13 @@ def create(data_name, args, phase='test'):
         else:
             log("\taffinity features exist")
 
-    if 'distribution' in args.mediator['input']:
-        if not os.path.isfile(output + "/distribution.npy"):
-            log('\tgetting distribution features')
-            distribution_feat = get_distribution_feat([knn_base] + knn_committee, pairs)
-            np.save(output + "/distribution.npy", distribution_feat)
+    if 'structure' in args.mediator['input']:
+        if not os.path.isfile(output + "/structure.npy"):
+            log('\tgetting structure features')
+            structure_feat = get_structure_feat([knn_base] + knn_committee, pairs)
+            np.save(output + "/structure.npy", structure_feat)
         else:
-            log("\tdistribution features exist")
+            log("\tstructure features exist")
 
     # get labels when training
     if phase == 'train' or args.evaluation:

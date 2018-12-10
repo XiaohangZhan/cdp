@@ -69,6 +69,7 @@ def sample(base, committee, vote_num=7, th=0.7):
             simi = 1.0 - np.array(base[i][1])
             for j,k in enumerate(knn):
                 if k != -1 and k != i and simi[j] > th:
+                #if len(np.intersect1d(base[i][0], base[k][0], assume_unique=True)) > 5:
                     pairs.append(sorted([i, k]))
                     scores.append(simi[j])
     pairs = np.array(pairs)
@@ -94,7 +95,7 @@ def cdp(args):
             args.strategy, 
             int('relationship' in args.mediator['input']),
             int('affinity' in args.mediator['input']),
-            int('distribution' in args.mediator['input']),
+            int('structure' in args.mediator['input']),
             args.mediator['threshold'])
     elif args.strategy == 'groundtruth':
         output_cdp = '{}/output/gt'.format(exp_root)
@@ -202,7 +203,7 @@ def mediator(args):
         args.k,
         int('relationship' in args.mediator['input']),
         int('affinity' in args.mediator['input']),
-        int('distribution' in args.mediator['input']),
+        int('structure' in args.mediator['input']),
     )
     med = Mediator(args)
     if not os.path.isfile(args.mediator['model_name']) or args.mediator['force_retrain']:

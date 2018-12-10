@@ -7,7 +7,7 @@ feat_dim: 256
 
 # adjustable paramters
 k: 15
-strategy: mediator # vote or mediator
+strategy: vote # vote or mediator
 vote:
     accept_num: 4
     threshold: 0.605
@@ -15,8 +15,8 @@ mediator:
     force_retrain: False # set to True if you want to retrain the model rather than load it.
     gpus: '0'
     train_data_name: "labeled/emore_l200k"
-    threshold: 0.9875
-    input: ['relationship', 'affinity', 'distribution']
+    threshold: 0.9915
+    input: ['relationship', 'affinity', 'structure']
 propagation:
     max_sz: 600 # maximal number of images in a class
     step: 0.05 # step to increase threshold, usually dont need to adjust
