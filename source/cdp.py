@@ -108,7 +108,7 @@ def cdp(args):
         pairs, scores = mediator(args)
     else:
         pairs, scores = groundtruth(args)
-    log("pair num: {}".format(len(pairs)))
+    log("\tpair num: {}".format(len(pairs)))
 
     # propagation
     log("Propagation ...")
@@ -145,6 +145,8 @@ def cdp(args):
         with open("data/{}/meta.txt".format(args.data_name), 'r') as f:
             label = f.readlines()
             label = np.array([int(l.strip()) for l in label])
+
+        assert len(label) == len(pred), "numbers of labels and predictions are different: {} vs {}".format(len(label), len(pred))
 
         # pair evaluation
         log("Pair accuracy: {:.4g}".format((label[pairs[:,0]] == label[pairs[:,1]]).sum() / float(len(pairs))))
@@ -208,8 +210,8 @@ def mediator(args):
     create(args.data_name, args)
     log("Testing")
     med.test() 
-    raw_pairs = np.load("{}/output/{}/k{}/pairs.npy".format(args.exp_root, args.data_name, args.k))
-    pair_pred = np.load("{}/output/{}/k{}/pairs_pred.npy".format(args.exp_root, args.data_name, args.k))
+    raw_pairs = np.load("{}/output/pairset/k{}/pairs.npy".format(args.exp_root, args.k))
+    pair_pred = np.load("{}/output/pairset/k{}/pairs_pred.npy".format(args.exp_root, args.k))
     sel = np.where(pair_pred > args.mediator['threshold'])[0]
     pairs = raw_pairs[sel, :]
     scores = pair_pred[sel]

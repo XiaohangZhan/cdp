@@ -9,8 +9,14 @@ feat_dim: 256
 k: 20
 strategy: vote # vote or mediator
 vote:
-    accept_num: 4 # <= len(committee), not applicable if len(committee) == 0
-    threshold: 0.64 # usual range: [0.3, 0.8], lower threshold --> higher recall and lower prec
+    accept_num: 4
+    threshold: 0.625
+mediator:
+    force_retrain: False # set to True if you want to retrain the model rather than load it.
+    gpus: '0'
+    train_data_name: "labeled/emore_l200k"
+    threshold: 0.9915
+    input: ['relationship', 'affinity']
 propagation:
     max_sz: 600 # maximal number of images in a class
     step: 0.05 # step to increase threshold, usually dont need to adjust

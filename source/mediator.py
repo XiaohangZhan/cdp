@@ -187,12 +187,12 @@ class Mediator(object):
         cfg.exp_root = args.exp_root
         cfg.model_name = args.mediator['model_name']
         cfg.input_dim = infer_dim(args)
-        cfg.trainset_fn = ["{}/output/{}/k{}/{}.npy".format(args.exp_root, args.mediator['train_data_name'], args.k, ip) for ip in args.mediator['input']]
-        cfg.trainset_label = "{}/output/{}/k{}/pair_label.npy".format(args.exp_root, args.mediator['train_data_name'], args.k)
-        cfg.testset_fn = ["{}/output/{}/k{}/{}.npy".format(args.exp_root, args.data_name, args.k, ip) for ip in args.mediator['input']]
-        cfg.testset_label = "{}/output/{}/k{}/pair_label.npy".format(args.exp_root, args.data_name, args.k)
+        cfg.trainset_fn = ["data/{}/pairset/k{}/{}.npy".format(args.mediator['train_data_name'], args.k, ip) for ip in args.mediator['input']]
+        cfg.trainset_label = "data/{}/pairset/k{}/pair_label.npy".format(args.mediator['train_data_name'], args.k)
+        cfg.testset_fn = ["{}/output/pairset/k{}/{}.npy".format(args.exp_root, args.k, ip) for ip in args.mediator['input']]
+        cfg.testset_label = "{}/output/pairset/k{}/pair_label.npy".format(args.exp_root, args.k)
 
-        cfg.test_output = "{}/output/{}/k{}/pairs_pred.npy".format(args.exp_root, args.data_name, args.k)
+        cfg.test_output = "{}/output/pairset/k{}/pairs_pred.npy".format(args.exp_root, args.k)
 
         cfg.val = False
 

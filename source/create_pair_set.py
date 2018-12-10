@@ -66,7 +66,10 @@ def get_label(id_label, pairs):
     return (id_label[pairs[:,0]] == id_label[pairs[:,1]]).astype(np.float32)[:,np.newaxis]
 
 def create(data_name, args, phase='test'):
-    output = "{}/output/{}/k{}".format(args.exp_root, data_name, args.k)
+    if phase == 'test':
+        output = "{}/output/pairset/k{}".format(args.exp_root, args.k)
+    else:
+        output = "data/{}/pairset/k{}".format(data_name, args.k)
     members = [args.base] + args.committee
 
     # loading

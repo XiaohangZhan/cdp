@@ -2,17 +2,20 @@
 # unadjustable parameters (if need modificaiton, create a new experiment folder along with a new config file)
 base: "nas"
 committee: ['resnet50', 'resnet101', 'densenet121', 'ir'] # list of strings, note that the name should be consistent with your feature file names.
-data_name: "unlabeled/emore_u200k"
+data_name: "unlabeled/emore_u1.4m"
 feat_dim: 256
 
 # adjustable paramters
-k: 80
+k: 20
 strategy: mediator # vote or mediator
+vote:
+    accept_num: 4
+    threshold: 0.625
 mediator:
     force_retrain: False # set to True if you want to retrain the model rather than load it.
     gpus: '0'
     train_data_name: "labeled/emore_l1.4m"
-    threshold: 0.99
+    threshold: 0.992
     input: ['relationship', 'affinity']
 propagation:
     max_sz: 600 # maximal number of images in a class
