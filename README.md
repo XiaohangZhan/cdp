@@ -50,14 +50,13 @@ The results are stored in `experiments/*/output/*/sz*_step*/`, including: `meta.
 | 15 | vote     |     0     | accept0_th0.66/sz600_step0.05  | 89.35, 88.98, 89.16  |
 | 15 | vote     |     4     | accept4_th0.605/sz600_step0.05 | 92.87, 92.91, 92.89  |
 | 15 | mediator |     4     | 110_th0.9922/sz600_step0.05    | 94.45, 92.56, 93.49  |
+| 15 | mediator |     4     | 111_th0.9915/sz600_step0.05    | 96.46, 95.20, 95.83  |
 | 20 | vote     |     0     | accept0_th0.665/sz600_step0.05 | 89.88, 88.16, 89.01  |
-| 20 | vote     |     4     | accept4_th0.625/sz600_step0.05 | 92.23, 92.9, 92.56   |
-| 20 | mediator |     4     | 110_th0.9915/sz600_step0.05    | 92.97, 92.82, 92.9   |
-| 40 | vote     |     0     | accept0_th0.666/sz600_step0.05 | 88.21, 87.84, 88.02  |
-| 40 | vote     |     4     | accept4_th0.649/sz600_step0.05 | 91.4, 91.08, 91.24   |
-| 40 | mediator |     4     | 110_th0.989/sz600_step0.05     | 95.58, 87.93, 91.6   |
+| 20 | vote     |     4     | accept4_th0.625/sz600_step0.05 | 92.23, 92.90, 92.56  |
+| 20 | mediator |     4     | 110_th0.9915/sz600_step0.05    | 92.97, 92.82, 92.90  |
+| 20 | mediator |     4     | 111_th0.9915/sz600_step0.05    | 96.30, 95.65, 95.97  |
 
-note: (precision, recall, fscore) in each cell.
+note: for mediator, `110` means using `relationship` and `affinity`; `111` means using `relationship`, `affinity` and `structure`.
 
 ### Bibtex
 ```
