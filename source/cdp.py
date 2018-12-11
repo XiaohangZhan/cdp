@@ -69,7 +69,7 @@ def sample(base, committee, vote_num=7, th=0.7):
             simi = 1.0 - np.array(base[i][1])
             for j,k in enumerate(knn):
                 if k != -1 and k != i and simi[j] > th:
-                #if len(np.intersect1d(base[i][0], base[k][0], assume_unique=True)) > 5:
+                    #if len(np.intersect1d(base[i][0], base[k][0], assume_unique=True)) > 5:
                     pairs.append(sorted([i, k]))
                     scores.append(simi[j])
     pairs = np.array(pairs)
@@ -104,7 +104,6 @@ def cdp(args):
 
     output_sub = '{}/sz{}_step{}'.format(output_cdp, args.propagation['max_sz'], args.propagation['step'])
     log('Output folder: {}'.format(output_sub))
-    outpred = output_sub + '/pred.npy'
     outmeta = '{}/meta.txt'.format(output_sub)
     if not os.path.isdir(output_sub):
         os.makedirs(output_sub)
@@ -136,7 +135,6 @@ def cdp(args):
     pred_mapping = dict(zip(list(pred_unique), range(pred_unique.shape[0])))
     pred_mapping[-1] = -1
     pred = np.array([pred_mapping[p] for p in pred])
-    np.save(outpred, pred)
 
     # analyse results
     num_valid = len(valid[0])
