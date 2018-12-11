@@ -3,8 +3,6 @@
 ### Notice
 <span style="color:red">Code is in continuous updating, please pull before execution.</span>
 
-<span style="color:red">A multi-task face recognition framework based on PyTorch will be released after CVPR deadline.</span>
-
 ### Paper
 
 Xiaohang Zhan, Ziwei Liu, Junjie Yan, Dahua Lin, Chen Change Loy, ["Consensus-Driven Propagation in Massive Unlabeled Data for Face Recognition"](http://openaccess.thecvf.com/content_ECCV_2018/papers/Xiaohang_Zhan_Consensus-Driven_Propagation_in_ECCV_2018_paper.pdf), ECCV 2018
@@ -15,7 +13,7 @@ Project Page:
 ### Dependency
 Please use Python3, as we cannot guarantee its compatibility with python2. The version of PyTorch we use is 0.3.1. Other depencencies:
 
-    ```shell
+    ```
     pip install nmslib
     ```
 
@@ -70,7 +68,7 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
 
     Take `Multi-model mediator case` for example, the results are stored in `experiments/emore_u200k_cmt4/output/k15_mediator_111_th0.9915/sz600_step0.05/meta.txt`. The order is the same as that in `data/unlabeled/emore_u200k/list.txt`. The samples labeled as `-1` are discarded by CDP. You may assign them with new unique labels if you must use them.
 
-### Using your own data
+#### Using your own data
 
 1. Create your data directory, e.g. `mydata`
 
