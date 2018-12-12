@@ -110,10 +110,10 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
 
 ### Evaluation Results
 
-* data: emore_u200k
+* data: emore_u200k, images number: 200K, identity number: 2577 (original annotation)
 
-| k  | strategy | committee | optimal setting                | prec, recall, fscore |
-|----|----------|-----------|--------------------------------|----------------------|
+| k  | strategy | committee | optimal setting                | prec, recall, fscore | time (s) |
+|----|----------|-----------|--------------------------------|----------------------|----------|
 | 15 | vote     |     0     | accept0_th0.66/sz600_step0.05  | 89.35, 88.98, 89.16  |
 | 15 | vote     |     4     | accept4_th0.605/sz600_step0.05 | 92.87, 92.91, 92.89  |
 | 15 | mediator |     4     | 110_th0.9922/sz600_step0.05    | 94.45, 92.56, 93.49  |

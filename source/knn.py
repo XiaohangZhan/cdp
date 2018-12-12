@@ -32,7 +32,7 @@ def knn_nmslib(feats, k):
     index = nmslib.init(method='hnsw', space='cosinesimil')
     index.addDataPointBatch(feats)
     index.createIndex({'post': 2}, print_progress=True)
-    neighbours = index.knnQueryBatch(feats, k=k, num_threads=multiprocessing.cpu_count())   
+    neighbours = index.knnQueryBatch(feats, k=k, num_threads=multiprocessing.cpu_count())
     return neighbours
 
 def get_hist(topk):
@@ -78,6 +78,20 @@ def create_knn(args, data_name):
             assert feats.shape[0] == args.total_num, "Feature length of [{}] not consistent with list file, {} vs {}".format(m, feats.shape[0], args.total_num)
             log("\n\tSearch KNN for {}".format(m))
             neighbours = knn_nmslib(feats, args.k)
+
+            #length = np.array([len(n[0]) for n in neighbours])
+            #tofill = np.where(length < args.k)[0]
+            #for idx in tofill:
+            #    neighbours[idx][0] = fill_array(neighbours[idx][0], -1, args.k)
+            #    neighbours[idx][1] = fill_array(neighbours[idx][1], -1., args.k)
+            #knn_idx = np.concatenate([n[0][np.newaxis, :] for n in neighbours], axis=0)
+            #knn_idx = np.array([n[0] for n in neighbours])
+            #knn_idx = np.zeros((len(neighbours), args.k), dtype=neighbours[0][0].dtype)
+            #for i,n in enumerate(neighbours):
+            #    knn_idx[i,:] = 
+            #knn_dist = np.concatenate([n[1][np.newaxis, :] for n in neighbours], axis=0)
+            #knn_dist = np.array([n[1] for n in neighbours])
+            #np.savez("{}.npz".format(fn), idx=knn_idx, dist=knn_dist)
             dump2json(fn, neighbours)
             log("\n")
         else:
