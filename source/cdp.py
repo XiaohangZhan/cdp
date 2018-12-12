@@ -11,69 +11,31 @@ from .create_pair_set import create
 from .mediator import Mediator
 from .utils import log
 
-def get_hist(cmt):
-    cmt = [idx for c in cmt for idx in c]
-    hist = {}
-    for i in cmt:
-        if i == -1:
-            continue
-        if i in hist.keys():
-            hist[i] += 1
-        else:
-            hist[i] = 1
-    return hist
-
-def sample_task(i, base, committee, vote_num=7, th=0.7):
-    pairs = []
-    scores = []
-    hist = get_hist([c[i][0] for c in committee])
-    knn = base[i][0]
-    simi = 1.0 - base[i][1]
-    for j, k in enumerate(knn):
-        if k != -1 and k in hist.keys() and hist[k] >= vote_num and k != i and simi[j] > th:
-            pairs.append(sorted([i, k]))
-            scores.append(simi[j])
-    return pairs, scores
-    
-def helper(args):
-    sample_task(*args)
-
-def sample_parallel(base, committee, vote_num=7, th=0.7):
-    import multiprocessing
-    import tqdm
-    pool = multiprocessing.Pool(16)
-    if len(committee) > 0:
-        res = list(tqdm.tqdm(pool.imap(helper, zip(range(len(base)), [base]*len(base), [committee]*len(base), [vote_num]*len(base), [th]*len(base))), total=len(base)))
-    pairs, scores = zip(*res)
-    pairs = np.array(pairs)
-    scores = np.array(scores)
-    pairs, unique_idx = np.unique(pairs, return_index=True, axis=0)
-    scores = scores[unique_idx]
-    return pairs, scores
-
-def sample(base, committee, vote_num=7, th=0.7):
+def sample(base, committee, accept=7, th=0.7):
     pairs = []
     scores = []
     if len(committee) > 0:
-        for i in range(len(base)):
-            hist = get_hist([c[i][0] for c in committee])
-            knn = base[i][0]
-            simi = 1.0 - np.array(base[i][1])
-            for j, k in enumerate(knn):
-                if k != -1 and k in hist.keys() and hist[k] >= vote_num and k != i and simi[j] > th:
-                    pairs.append(sorted([i, k]))
-                    scores.append(simi[j])
+        knn = base[0]
+        k = knn.shape[1]
+        tile_knn = np.tile(knn.reshape(len(knn), -1, 1), (1, 1, k))
+        simi = 1.0 - base[1]
+        anchor = np.tile(np.arange(len(knn)).reshape(len(knn), 1), (1, knn.shape[1]))
+        vote_num = np.zeros(knn.shape, dtype=np.int)
+        for cmt in committee:
+            tile_cmt = np.tile(cmt[0].reshape(len(cmt[0]), 1, -1), (1, k, 1))
+            vote_num += (tile_knn == tile_cmt).sum(axis=2)
+        selidx = np.where((simi > th) & (vote_num >= accept) & (knn != -1) & (knn != anchor))
+
     else:
-        for i in range(len(base)):
-            knn = base[i][0]
-            simi = 1.0 - np.array(base[i][1])
-            for j,k in enumerate(knn):
-                if k != -1 and k != i and simi[j] > th:
-                    #if len(np.intersect1d(base[i][0], base[k][0], assume_unique=True)) > 5:
-                    pairs.append(sorted([i, k]))
-                    scores.append(simi[j])
-    pairs = np.array(pairs)
-    scores = np.array(scores)
+        knn = base[0]
+        simi = 1.0 - base[1]
+        anchor = np.tile(np.arange(len(knn)).reshape(len(knn), 1), (1, knn.shape[1]))
+        selidx = np.where((simi > th) & (knn != -1) & (knn != anchor))
+
+    pairs = np.hstack((anchor[selidx].reshape(-1, 1), knn[selidx].reshape(-1, 1)))
+    scores = simi[selidx]
+
+    pairs = np.sort(pairs, axis=1)
     pairs, unique_idx = np.unique(pairs, return_index=True, axis=0)
     scores = scores[unique_idx]
     return pairs, scores
@@ -173,19 +135,25 @@ def cdp(args):
 
 def vote(output, args):
     assert args.vote['accept_num'] <= len(args.committee)
-    base_knn_fn = 'data/{}/knn/{}_k{}.json'.format(args.data_name, args.base, args.k)
-    committee_knn_fn = ['data/{}/knn/{}_k{}.json'.format(args.data_name, cmt, args.k) for cmt in args.committee]
+    base_knn_fn = 'data/{}/knn/{}_k{}.npz'.format(args.data_name, args.base, args.k)
+    committee_knn_fn = ['data/{}/knn/{}_k{}.npz'.format(args.data_name, cmt, args.k) for cmt in args.committee]
+
     if not os.path.isfile(output + '/vote_pairs.npy'):
         log('Extracting pairs by voting ...')
-        with open(base_knn_fn, 'r') as f:
-            #knn_base = pickle.load(f)
-            knn_base = json.load(f)
+        #with open(base_knn_fn, 'r') as f:
+        #    knn_base = json.load(f)
+        knn_file = np.load(base_knn_fn)
+        knn_base = (knn_file['idx'], knn_file['dist'])
+
         knn_committee = []
         for i,cfn in enumerate(committee_knn_fn):
-            with open(cfn, 'r') as f:
-                knn_cmt = json.load(f)
-                knn_committee.append(knn_cmt)
-        pairs, scores = sample(knn_base, knn_committee, vote_num=args.vote['accept_num'], th=args.vote['threshold'])
+            #with open(cfn, 'r') as f:
+            #    knn_cmt = json.load(f)
+            #    knn_committee.append(knn_cmt)
+            knn_file = np.load(cfn)
+            knn_committee.append((knn_file['idx'], knn_file['dist']))
+
+        pairs, scores = sample(knn_base, knn_committee, accept=args.vote['accept_num'], th=args.vote['threshold'])
         np.save(output + '/vote_pairs.npy', pairs)
         np.save(output + '/vote_scores.npy', scores)
     else:

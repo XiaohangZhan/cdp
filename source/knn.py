@@ -72,27 +72,21 @@ def create_knn(args, data_name):
     # create knn files with nmslib
     log("KNN Processing for: {}".format(data_name))
     for m in members:
-        fn = "{}/{}_k{}.json".format(output_dir, m, args.k)
+        fn = "{}/{}_k{}.npz".format(output_dir, m, args.k)
         if not os.path.isfile(fn):
             feats = load_feats('data/{}/features/{}.bin'.format(data_name, m), args.feat_dim)
             assert feats.shape[0] == args.total_num, "Feature length of [{}] not consistent with list file, {} vs {}".format(m, feats.shape[0], args.total_num)
             log("\n\tSearch KNN for {}".format(m))
             neighbours = knn_nmslib(feats, args.k)
 
-            #length = np.array([len(n[0]) for n in neighbours])
-            #tofill = np.where(length < args.k)[0]
-            #for idx in tofill:
-            #    neighbours[idx][0] = fill_array(neighbours[idx][0], -1, args.k)
-            #    neighbours[idx][1] = fill_array(neighbours[idx][1], -1., args.k)
-            #knn_idx = np.concatenate([n[0][np.newaxis, :] for n in neighbours], axis=0)
-            #knn_idx = np.array([n[0] for n in neighbours])
-            #knn_idx = np.zeros((len(neighbours), args.k), dtype=neighbours[0][0].dtype)
-            #for i,n in enumerate(neighbours):
-            #    knn_idx[i,:] = 
-            #knn_dist = np.concatenate([n[1][np.newaxis, :] for n in neighbours], axis=0)
-            #knn_dist = np.array([n[1] for n in neighbours])
-            #np.savez("{}.npz".format(fn), idx=knn_idx, dist=knn_dist)
-            dump2json(fn, neighbours)
+            length = np.array([len(n[0]) for n in neighbours])
+            tofill = np.where(length < args.k)[0]
+            for idx in tofill:
+                neighbours[idx][0] = fill_array(neighbours[idx][0], -1, args.k)
+                neighbours[idx][1] = fill_array(neighbours[idx][1], -1., args.k)
+            knn_idx = np.array([n[0] for n in neighbours])
+            knn_dist = np.array([n[1] for n in neighbours])
+            np.savez(fn, idx=knn_idx, dist=knn_dist)
             log("\n")
         else:
             log("\tKNN file already exists: {}".format(fn))

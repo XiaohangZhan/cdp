@@ -38,7 +38,7 @@ def main():
     create_knn(args, args.data_name)
     knn_time = time.time() - start
     start = time.time()
-    #cdp(args)
+    cdp(args)
     cdp_time = time.time() - start
     log("Runing time: knn: {:.4g} s, cdp: {:.4g} s, total: {:.4g} s".format(knn_time, cdp_time, knn_time + cdp_time))
 
