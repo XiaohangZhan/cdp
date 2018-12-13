@@ -118,25 +118,28 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
 
 ### Evaluation Results
 
-* data: emore_u200k, images number: 200K, identity number: 2577 (original annotation)
+* data: emore_u200k (This data set is not the one in the paper which cannot be released, but the relative results are similar.)
+    images number: 200K;
+    identity number: 2577 (original annotation)
 
-**baselines**
+* **baselines**
 
-| method                                | #clusters | prec, recall, fscore | time   |
-|---------------------------------------|-----------|----------------------|--------|
-| * kmeans (ncluster=2577)              | 2577      | 94.3, 74.98, 83.54   | 618.1s |
-| * MiniBatchKMeans (ncluster=2577)     | 2577      | 89.98, 87.86, 88.91  | 122.8s |
-| * Spectral (ncluster=2577)            | 2577      |                      |        |
-| * HAC (ncluster=2577, knn=30)         | 2577      |                      |        |
-| FastHAC (distance=0.7, method=single) | 46767     | 99.79, 53.18, 69.38  | 1.66h  |
-| DBSCAN (eps=0.75, nim_samples=10)     |           |                      |        |
-| HDBSCAN (min_samples=10)              |           |                      |        |
-| KNN DBSCAN (knn=80, min_samples=10)   | 2494      | 1.358, 78.99, 2.669  | 60.5s  |
-| ApproxRankOrder (knn=20, th=10)       | 85150     | 52.96, 16.93, 25.66  | 86.4s  |
+| method                                | #clusters | prec, recall, fscore | time                      |
+|---------------------------------------|-----------|----------------------|---------------------------|
+| * kmeans (ncluster=2577)              | 2577      | 94.24, 74.89, 83.45  | 618.1s                    |
+| * MiniBatchKMeans (ncluster=2577)     | 2577      | 89.98, 87.86, 88.91  | 122.8s                    |
+| * Spectral (ncluster=2577)            | 2577      |                      |                           |
+| * HAC (ncluster=2577, knn=30)         | 2577      |                      |                           |
+| FastHAC (distance=0.7, method=single) | 46767     | 99.79, 53.18, 69.38  | 1.66h                     |
+| DBSCAN (eps=0.75, nim_samples=10)     |           |                      |                           |
+| HDBSCAN (min_samples=10)              |           |                      |                           |
+| KNN DBSCAN (knn=80, min_samples=10)   | 2494      | 1.358, 78.99, 2.669  | 60.5s (knn time included) |
+| ApproxRankOrder (knn=20, th=10)       | 85150     | 52.96, 16.93, 25.66  | 86.4s                     |
+| ApproxRankOrder (knn=20, th=2)        | 97121     | 86.52, 9.495, 17.11  | 86.7s                     |
 
 note: We adjust parameters to achieve best performance of each method. Methods marked * need number of clusters as input. We use the ground truth number of clusters to report their results. But note that it is unknown in practical use.
 
-**CDP**
+* **CDP**
 
 | k  | strategy | committee | setting         | prec, recall, fscore | knn time | cluster time | total time |
 |----|----------|-----------|-----------------|----------------------|----------|--------------|------------|
