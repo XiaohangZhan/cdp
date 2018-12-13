@@ -82,8 +82,7 @@ def create_knn(args, data_name):
             length = np.array([len(n[0]) for n in neighbours])
             tofill = np.where(length < args.k)[0]
             for idx in tofill:
-                neighbours[idx][0] = fill_array(neighbours[idx][0], -1, args.k)
-                neighbours[idx][1] = fill_array(neighbours[idx][1], -1., args.k)
+                neighbours[idx] = [fill_array(neighbours[idx][0], -1, args.k), fill_array(neighbours[idx][1], -1., args.k)]
             knn_idx = np.array([n[0] for n in neighbours])
             knn_dist = np.array([n[1] for n in neighbours])
             np.savez(fn, idx=knn_idx, dist=knn_dist)

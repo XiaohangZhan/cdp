@@ -108,11 +108,35 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
     * Higher threshold results in higher precision and lower recall.
     * Larger `max_sz` results in lower precision and higher recall.
 
+### Run baselines
+
+    We also implement several baseline clustering methods including: KMeans, MiniBatch-KMeans, Spectral, Hierarchical Agglomerative Clustering (HAC), FastHAC, DBSCAN, HDBSCAN, KNN DBSCAN, Approximate Rank-Order.
+
+    ```shell
+    sh run_baselines.sh # results stored in `baseline_output/`.
+    ```
+
 ### Evaluation Results
 
 * data: emore_u200k, images number: 200K, identity number: 2577 (original annotation)
 
-* KNN using nmslib
+**baselines**
+
+| method                                | #clusters | prec, recall, fscore | time   |
+|---------------------------------------|-----------|----------------------|--------|
+| * kmeans (ncluster=2577)              | 2577      | 94.3, 74.98, 83.54   | 618.1s |
+| * MiniBatchKMeans (ncluster=2577)     | 2577      | 89.98, 87.86, 88.91  | 122.8s |
+| * Spectral (ncluster=2577)            | 2577      |                      |        |
+| * HAC (ncluster=2577, knn=30)         | 2577      |                      |        |
+| FastHAC (distance=0.7, method=single) | 46767     | 99.79, 53.18, 69.38  | 1.66h  |
+| DBSCAN (eps=0.75, nim_samples=10)     |           |                      |        |
+| HDBSCAN (min_samples=10)              |           |                      |        |
+| KNN DBSCAN (knn=80, min_samples=10)   | 2494      | 1.358, 78.99, 2.669  | 60.5s  |
+| ApproxRankOrder (knn=20, th=10)       | 85150     | 52.96, 16.93, 25.66  | 86.4s  |
+
+note: We adjust parameters to achieve best performance of each method. Methods marked * need number of clusters as input. We use the ground truth number of clusters to report their results. But note that it is unknown in practical use.
+
+**CDP**
 
 | k  | strategy | committee | setting         | prec, recall, fscore | knn time | cluster time | total time |
 |----|----------|-----------|-----------------|----------------------|----------|--------------|------------|
@@ -120,8 +144,6 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
 | 15 | vote     |     4     | accept4_th0.605 | 93.36, 92.91, 93.13  |   78.7s  |     6.0s     |    84.7s   |
 | 15 | mediator |     4     | 110_th0.9938    | 94.06, 92.45, 93.25  |   78.7s  |     77.7s    |   156.4s   |
 | 15 | mediator |     4     | 111_th0.9925    | 96.66, 94.93, 95.79  |   78.7s  |    137.8s    |   216.5s   |
-
-* KNN using sklearn
 
 note: for mediator, `110` means using `relationship` and `affinity`; `111` means using `relationship`, `affinity` and `structure`.
 

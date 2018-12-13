@@ -5,8 +5,7 @@ from multiprocessing import Pool
 from functools import partial
 
 """
-This is an implementation of https://arxiv.org/pdf/1604.00989.pdf, a modified
-version of rank-order clustering.
+This is an implementation of https://arxiv.org/pdf/1604.00989.pdf.
 
 original version can be found at https://github.com/varun-suresh/Clustering
 

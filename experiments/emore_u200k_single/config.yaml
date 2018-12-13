@@ -6,7 +6,7 @@ data_name: "unlabeled/emore_u200k" # data to peform clustering
 feat_dim: 256
 
 # adjustable paramters
-k: 15
+k: 80
 strategy: vote # vote or mediator
 vote:
     accept_num: 0 # <= len(committee), not applicable if len(committee) == 0

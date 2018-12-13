@@ -27,14 +27,6 @@ class Timer:
             print('{} consumes {} s'.format(self.name, time.time() - self.start))
         return exc_type is None
 
-def load_knn(ofn):
-    if ofn.endswith('.pkl'):
-        return pickle.load(open(ofn, 'rb'))
-    elif ofn.endswith('.json'):
-        return json.load(open(ofn, 'r'))
-    else:
-        raise ValueError('Unknown suffix: {}. Only support .pkl and .json.'.format(ofn))
-
 def dump2json(ofn, data, force=False):
     if os.path.exists(ofn) and not force:
         return
@@ -182,7 +174,7 @@ if __name__ == '__main__':
     elif args.method == 'mini_batch_kmeans':
         ofn = ofn_prefix + 'ncluster_{}_bs_{}/meta.txt'.format(args.ncluster, args.batch_size)
     elif args.method == "approx_rank_order":
-        ofn = ofn_prefix + "knn_{}/meta.txt".format(args.knn, th=args.aro_th)
+        ofn = ofn_prefix + "knn_{}_th_{}/meta.txt".format(args.knn, args.aro_th)
     else:
         ofn = ofn_prefix + 'ncluster_{}/meta.txt'.format(args.ncluster)
 
@@ -190,15 +182,13 @@ if __name__ == '__main__':
         with open(ofn, 'r') as f:
             label = f.readlines()
         label = np.array([int(l.strip()) for l in label])
+        print("********\nWarning: the result is loaded from file: {}. If you want to overwrite it, set \"--force\"********\n".format(ofn))
 
     else:
         if not os.path.exists(os.path.dirname(ofn)):
             os.makedirs(os.path.dirname(ofn))
     
         feat_dim = args.feat_dim
-    
-
-    
         feat = np.fromfile("data/unlabeled/{}/features/{}.bin".format(args.data, args.feature), dtype=np.float32, count=inst_num*feat_dim).reshape(inst_num, feat_dim)
         feat = normalize(feat)
     
@@ -207,11 +197,15 @@ if __name__ == '__main__':
         elif args.method == 'knn_dbscan':
             from scipy.sparse import csr_matrix
             # load knn and construct sparse mat
-            knn_fn = 'data/unlabeled/{}/knn/{}_k{}.json'.format(args.data, args.feature, args.knn)
-            knns = load_knn(knn_fn)
+            knn_fn = 'data/unlabeled/{}/knn/{}_k{}.npz'.format(args.data, args.feature, args.knn)
+            knn_file = np.load(knn_fn)
+            knn_idx, knn_dist = knn_file['idx'], knn_file['dist']
             row, col, data = [], [], []
-            for row_i, knn in enumerate(knns):
-                ns, dists = knn
+            for row_i in range(knn_idx.shape[0]):
+                ns = knn_idx[row_i]
+                dists = knn_dist[row_i]
+                valid = np.where(ns > -1)
+                ns, dists = ns[valid], dists[valid]
                 for n, dist in zip(ns, dists):
                     if 1 - dist < 0.7:
                         continue
@@ -233,7 +227,7 @@ if __name__ == '__main__':
             from approx_rank_order_cluster import build_index, calculate_symmetric_dist, perform_clustering
             app_nearest_neighbors, dists = build_index(feat, n_neighbors=args.knn)
             distance_matrix = calculate_symmetric_dist(app_nearest_neighbors)
-            labels = perform_clustering(feat, n_neighbors=args.knn)
+            labels = perform_clustering(feat, n_neighbors=args.knn, th=args.aro_th)
         elif args.method == "kmeans":
             labels = KMeans(feat, n_clusters=args.ncluster)
         elif args.method == "spectral":

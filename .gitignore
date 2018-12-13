@@ -10,7 +10,8 @@ output*
 working
 data
 source.sh
-*.sh
+run.sh
+run_baseline.sh
 results.txt
 hide
 emore_u1.4m_single
