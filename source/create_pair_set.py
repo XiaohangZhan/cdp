@@ -13,17 +13,18 @@ def get_relationship_feat(committee, pairs):
         log("\t\tprocessing: {}/{}".format(i, len(committee)))
         knn = cmt[0]
         k = knn.shape[1]
-        find0 = (knn[pairs[:,0], :] == np.tile(pairs[:,1:], (1, k))).any(axis=1)
-        find1 = (knn[pairs[:,1], :] == np.tile(pairs[:,:1], (1, k))).any(axis=1)
-        votefeat.append(np.array([1.0 if p[1] in knn[p[0]] or p[0] in knn[p[1]] else 0.0 for p in pairs]).astype(np.float32))
+        find0 = (knn[pairs[:,0], :] == np.tile(pairs[:,1:], (1, k))).any(axis=1, keepdims=True)
+        find1 = (knn[pairs[:,1], :] == np.tile(pairs[:,:1], (1, k))).any(axis=1, keepdims=True)
+        votefeat.append((find0 | find1).astype(np.float32))
+        #votefeat.append(np.array([1.0 if p[1] in knn[p[0]] or p[0] in knn[p[1]] else 0.0 for p in pairs]).astype(np.float32))
     log('\t\trelationship feature done. time: {}'.format(time.time() - start))
-    return np.array(votefeat).T
+    return np.hstack(votefeat)
 
 def cosine_similarity(feat1, feat2):
     assert feat1.shape == feat2.shape
-    feat1 /= np.linalg.norm(feat1, axis=1).reshape(-1,1)
-    feat2 /= np.linalg.norm(feat2, axis=1).reshape(-1,1)
-    return np.array([np.dot(feat1[i,:], feat2[i,:]) for i in range(feat1.shape[0])])[:,np.newaxis]
+    feat1 /= np.linalg.norm(feat1, axis=1).reshape(-1, 1)
+    feat2 /= np.linalg.norm(feat2, axis=1).reshape(-1, 1)
+    return np.einsum('ij,ij->i', feat1, feat2).reshape(-1, 1).reshape(-1, 1) # row-wise dot
     
 def get_affinity_feat(features, pairs):
     start = time.time()
@@ -39,7 +40,8 @@ def get_structure_feat(members, pairs):
     distr_commnb = []
     for i,m in enumerate(members):
         log("\t\tprocessing: {}/{}".format(i, len(members)))
-        comm_neighbor = np.array([len(np.intersect1d(m[p[0]][0], m[p[1]][0], assume_unique=True)) for p in pairs]).astype(np.float32)[:,np.newaxis]
+        knn = m[0]
+        comm_neighbor = np.array([len(np.intersect1d(knn[p[0]], knn[p[1]], assume_unique=True)) for p in pairs]).astype(np.float32)[:,np.newaxis]
         distr_commnb.append(comm_neighbor)
     log('\t\tstructure feature done. time: {}'.format(time.time() - start))
     return np.hstack(distr_commnb)
@@ -47,7 +49,6 @@ def get_structure_feat(members, pairs):
 def create_pairs(base):
     pairs = []
     knn = base[0]
-    k = knn.shape[1]
     anchor = np.tile(np.arange(len(knn)).reshape(len(knn), 1), (1, knn.shape[1]))
     selidx = np.where((knn != -1) & (knn != anchor))
     pairs = np.hstack((anchor[selidx].reshape(-1, 1), knn[selidx].reshape(-1, 1)))
@@ -61,6 +62,7 @@ def create_pairs(base):
     # remove single point
 #    keepidx = np.where(pairs[:,0] != pairs[:,1])[0]
 #    pairs = pairs[keepidx,:]
+    pairs = np.sort(pairs, axis=1)
     pairs = np.unique(pairs, axis=0)
     return pairs
 
@@ -83,16 +85,16 @@ def create(data_name, args, phase='test'):
 
     if not os.path.isfile(output + "/pairs.npy") or not os.path.isfile(output + "/structure.npy"):
         log("\tLoading base KNN")
-        with open('data/{}/knn/{}_k{}.json'.format(data_name, args.base, args.k), 'r') as f:
-            knn_base = json.load(f)
+        knn_file = np.load('data/{}/knn/{}_k{}.npz'.format(data_name, args.base, args.k))
+        knn_base = (knn_file['idx'], knn_file['dist'])
     
         if 'relationship' in args.mediator['input'] or 'structure' in args.mediator['input']:
             log("\tLoading committee KNN")
             knn_committee = []
-            committee_knn_fn = ['data/{}/knn/{}_k{}.json'.format(data_name, cmt, args.k) for cmt in args.committee]
+            committee_knn_fn = ['data/{}/knn/{}_k{}.npz'.format(data_name, cmt, args.k) for cmt in args.committee]
             for cfn in committee_knn_fn:
-                with open(cfn, 'r') as f:
-                    knn_committee.append(json.load(f))
+                knn_file = np.load(cfn)
+                knn_committee.append((knn_file['idx'], knn_file['dist']))
 
     if not os.path.isdir(output):
         os.makedirs(output)

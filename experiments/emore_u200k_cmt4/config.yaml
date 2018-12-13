@@ -15,8 +15,10 @@ mediator:
     force_retrain: False # set to True if you want to retrain the model rather than load it.
     gpus: '0' # for multi-gpu train/test, e.g., '0,1,2,3'
     train_data_name: "labeled/emore_l200k"
-    threshold: 0.9922
-    input: ['relationship', 'affinity']
+    #threshold: 0.9938
+    threshold: 0.9925
+    #input: ['relationship', 'affinity']
+    input: ['relationship', 'affinity', 'structure']
 propagation:
     max_sz: 600 # maximal number of images in a class
     step: 0.05 # step to increase threshold, usually don't need to adjust

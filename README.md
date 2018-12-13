@@ -112,16 +112,16 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
 
 * data: emore_u200k, images number: 200K, identity number: 2577 (original annotation)
 
-| k  | strategy | committee | optimal setting                | prec, recall, fscore | time (s) |
-|----|----------|-----------|--------------------------------|----------------------|----------|
-| 15 | vote     |     0     | accept0_th0.66/sz600_step0.05  | 89.35, 88.98, 89.16  |
-| 15 | vote     |     4     | accept4_th0.605/sz600_step0.05 | 92.87, 92.91, 92.89  |
-| 15 | mediator |     4     | 110_th0.9922/sz600_step0.05    | 94.45, 92.56, 93.49  |
-| 15 | mediator |     4     | 111_th0.9915/sz600_step0.05    | 96.46, 95.20, 95.83  |
-| 20 | vote     |     0     | accept0_th0.665/sz600_step0.05 | 89.88, 88.16, 89.01  |
-| 20 | vote     |     4     | accept4_th0.625/sz600_step0.05 | 92.23, 92.90, 92.56  |
-| 20 | mediator |     4     | 110_th0.9915/sz600_step0.05    | 92.97, 92.82, 92.90  |
-| 20 | mediator |     4     | 111_th0.9915/sz600_step0.05    | 96.30, 95.65, 95.97  |
+* KNN using nmslib
+
+| k  | strategy | committee | setting         | prec, recall, fscore | knn time | cluster time | total time |
+|----|----------|-----------|-----------------|----------------------|----------|--------------|------------|
+| 15 | vote     |     0     | accept0_th0.66  | 89.35, 88.98, 89.16  |   14.8s  |     7.7s     |    22.5s   |
+| 15 | vote     |     4     | accept4_th0.605 | 93.36, 92.91, 93.13  |   78.7s  |     6.0s     |    84.7s   |
+| 15 | mediator |     4     | 110_th0.9938    | 94.06, 92.45, 93.25  |   78.7s  |     77.7s    |   156.4s   |
+| 15 | mediator |     4     | 111_th0.9925    | 96.66, 94.93, 95.79  |   78.7s  |    137.8s    |   216.5s   |
+
+* KNN using sklearn
 
 note: for mediator, `110` means using `relationship` and `affinity`; `111` means using `relationship`, `affinity` and `structure`.
 
