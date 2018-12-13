@@ -119,7 +119,9 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
 ### Evaluation Results
 
 * data: emore_u200k (This data set is not the one in the paper which cannot be released, but the relative results are similar.)
+
     images number: 200K;
+
     identity number: 2577 (original annotation)
 
 * **baselines**
