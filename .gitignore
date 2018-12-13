@@ -10,7 +10,7 @@ output*
 working
 data
 source.sh
-run.sh
+*.sh
 results.txt
 hide
 emore_u1.4m_single

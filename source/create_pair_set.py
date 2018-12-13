@@ -16,7 +16,6 @@ def get_relationship_feat(committee, pairs):
         find0 = (knn[pairs[:,0], :] == np.tile(pairs[:,1:], (1, k))).any(axis=1, keepdims=True)
         find1 = (knn[pairs[:,1], :] == np.tile(pairs[:,:1], (1, k))).any(axis=1, keepdims=True)
         votefeat.append((find0 | find1).astype(np.float32))
-        #votefeat.append(np.array([1.0 if p[1] in knn[p[0]] or p[0] in knn[p[1]] else 0.0 for p in pairs]).astype(np.float32))
     log('\t\trelationship feature done. time: {}'.format(time.time() - start))
     return np.hstack(votefeat)
 
@@ -52,16 +51,6 @@ def create_pairs(base):
     anchor = np.tile(np.arange(len(knn)).reshape(len(knn), 1), (1, knn.shape[1]))
     selidx = np.where((knn != -1) & (knn != anchor))
     pairs = np.hstack((anchor[selidx].reshape(-1, 1), knn[selidx].reshape(-1, 1)))
-#    for i in range(len(base)):
-#        knn = np.array(base[i][0])
-#        kkk = len(knn)
-#        anchor = i * np.ones((kkk,1), dtype=np.int)
-#        ps = np.sort(np.hstack((anchor, knn[:,np.newaxis])), axis=1)
-#        pairs.append(ps)
-#    pairs = np.vstack(pairs)
-    # remove single point
-#    keepidx = np.where(pairs[:,0] != pairs[:,1])[0]
-#    pairs = pairs[keepidx,:]
     pairs = np.sort(pairs, axis=1)
     pairs = np.unique(pairs, axis=0)
     return pairs
