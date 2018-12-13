@@ -180,9 +180,9 @@ if __name__ == '__main__':
 
     if os.path.exists(ofn) and not args.force:
         with open(ofn, 'r') as f:
-            label = f.readlines()
-        label = np.array([int(l.strip()) for l in label])
-        print("********\nWarning: the result is loaded from file: {}. If you want to overwrite it, set \"--force\"********\n".format(ofn))
+            labels = f.readlines()
+        labels = np.array([int(l.strip()) for l in labels])
+        print("********\nWarning: the result is loaded from file: {}. If you want to overwrite it, set \"--force\"\n********".format(ofn))
 
     else:
         if not os.path.exists(os.path.dirname(ofn)):
@@ -242,8 +242,9 @@ if __name__ == '__main__':
     if args.evaluate:
         if not os.path.isfile("data/unlabeled/{}/meta.txt".format(args.data)):
             raise Exception("Meta file not exist, please remove argument \"evaluate\" or create meta file: {}".format("data/unlabeled/{}/meta.txt".format(args.data)))
-        lb2idxs, idx2lb, cls_num, inst_num = read_meta("data/unlabeled/{}/meta.txt".format(args.data))
-        idx2lb = np.array(idx2lb)
-        print('prec / recall / fscore: {:.4g}, {:.4g}, {:.4g}'.format(*eval_cluster.fscore(idx2lb, labels)))
+        with open("data/unlabeled/{}/meta.txt".format(args.data), 'r') as f:
+            meta = f.readlines()
+        meta = np.array([int(l.strip()) for l in meta])
+        print('prec / recall / fscore: {:.4g}, {:.4g}, {:.4g}'.format(*eval_cluster.fscore(meta, labels)))
 
     print("time: {:.2f} s".format(time.time() - start))
