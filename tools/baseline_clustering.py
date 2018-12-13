@@ -145,32 +145,22 @@ def hdbscan(feat, min_samples=10):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='SKLearn Clustering')
-    parser.add_argument('--data', type=str)
-    parser.add_argument('--feature', type=str)
+    parser.add_argument('--data', type=str, required=True)
+    parser.add_argument('--feature', type=str, required=True)
     parser.add_argument('--feat-dim', default=256, type=int)
     parser.add_argument('--ncluster', default=1000, type=int)
     parser.add_argument('--batch-size', default=100, type=int)
     parser.add_argument('--eps', default=0.75, type=float)
     parser.add_argument('--min-samples', default=10, type=int)
     parser.add_argument('--knn', default=30, type=int)
+    parser.add_argument('--aro-th', default=2, type=float)
     parser.add_argument('--hmethod', default='single', type=str)
-    parser.add_argument('--method', type=str)
+    parser.add_argument('--method', type=str, required=True)
     parser.add_argument('--evaluate', action='store_true')
     parser.add_argument('--force', action='store_true')
     args = parser.parse_args()
 
-    assert args.method
-
-    method2op = {
-        'kmeans': KMeans,
-        'mini_batch_kmeans': MiniBatchKMeans,
-        'spectral': spectral,
-        'hierarchy': hierarchy,
-        'fast_hierarchy': fast_hierarchy,
-        'dbscan': dbscan,
-        'hdbscan': hdbscan,
-        'knn_dbscan': knn_dbscan,
-    }
+    assert args.method in ['kmeans', 'mini_batch_kmeans', 'spectral', 'hierarchy', 'fast_hierarchy', 'dbscan', 'hdbscan', 'knn_dbscan', 'approx_rank_order']
 
 
     start = time.time()
@@ -178,25 +168,28 @@ if __name__ == '__main__':
     with open("data/unlabeled/{}/list.txt".format(args.data), 'r') as f:
         fns = f.readlines()
     inst_num = len(fns)
-    cluster_func = method2op[args.method]
-    ofn_prefix = 'baseline_output/'
+    ofn_prefix = 'baseline_output/{}_{}_'.format(args.data, args.method)
     print("Method: {}".format(args.method))
 
     if args.method == 'dbscan' or args.method == 'knn_dbscan':
-        ofn = os.path.join(ofn_prefix, '{}_{}_eps_{}_min_{}/clusters.npy'.format(args.data, args.method, args.eps, args.min_samples))
+        ofn = ofn_prefix + 'eps_{}_min_{}/meta.txt'.format(args.eps, args.min_samples)
     elif args.method == 'hdbscan':
-        ofn = os.path.join(ofn_prefix, '{}_{}_min_{}/clusters.npy'.format(args.data, args.method, args.min_samples))
+        ofn = ofn_prefix + 'min_{}/meta.txt'.format(args.min_samples)
     elif args.method == 'fast_hierarchy':
-        ofn = os.path.join(ofn_prefix, '{}_{}_eps_{}_hmethod_{}/clusters.npy'.format(args.data, args.method, args.eps, args.hmethod))
+        ofn = ofn_prefix + 'eps_{}_hmethod_{}/meta.txt'.format(args.eps, args.hmethod)
     elif args.method == 'hierarchy':
-        ofn = os.path.join(ofn_prefix, '{}_{}_ncluster_{}_knn_{}/clusters.npy'.format(args.data, args.method, args.ncluster, args.knn))
+        ofn = ofn_prefix + 'ncluster_{}_knn_{}/meta.txt'.format(args.ncluster, args.knn)
     elif args.method == 'mini_batch_kmeans':
-        ofn = os.path.join(ofn_prefix, '{}_{}_ncluster_{}_bs_{}/clusters.npy'.format(args.data, args.method, args.ncluster, args.batch_size))
+        ofn = ofn_prefix + 'ncluster_{}_bs_{}/meta.txt'.format(args.ncluster, args.batch_size)
+    elif args.method == "approx_rank_order":
+        ofn = ofn_prefix + "knn_{}/meta.txt".format(args.knn, th=args.aro_th)
     else:
-        ofn = os.path.join(ofn_prefix, '{}_{}_ncluster_{}/clusters.npy'.format(args.data, args.method, args.ncluster))
+        ofn = ofn_prefix + 'ncluster_{}/meta.txt'.format(args.ncluster)
 
     if os.path.exists(ofn) and not args.force:
-        label = np.load(ofn)
+        with open(ofn, 'r') as f:
+            label = f.readlines()
+        label = np.array([int(l.strip()) for l in label])
 
     else:
         if not os.path.exists(os.path.dirname(ofn)):
@@ -210,7 +203,7 @@ if __name__ == '__main__':
         feat = normalize(feat)
     
         if args.method == 'dbscan':
-            labels = cluster_func(feat, eps=args.eps, min_samples=args.min_samples)
+            labels = KMeans(feat, eps=args.eps, min_samples=args.min_samples)
         elif args.method == 'knn_dbscan':
             from scipy.sparse import csr_matrix
             # load knn and construct sparse mat
@@ -227,23 +220,34 @@ if __name__ == '__main__':
                     data.append(dist)
             sparse_affinity = csr_matrix((data, (row, col)), shape=(inst_num, inst_num))
             # clustering
-            labels = cluster_func(sparse_affinity, eps=args.eps, min_samples=args.min_samples)
+            labels = knn_dbscan(sparse_affinity, eps=args.eps, min_samples=args.min_samples)
         elif args.method == 'hdbscan':
-            labels = cluster_func(feat, min_samples=args.min_samples)
+            labels = hdbscan(feat, min_samples=args.min_samples)
         elif args.method == 'fast_hierarchy':
-            labels = cluster_func(feat, distance=args.eps, hmethod=args.hmethod)
+            labels = fast_hierarchy(feat, distance=args.eps, hmethod=args.hmethod)
         elif args.method == 'hierarchy':
-            labels = cluster_func(feat, n_clusters=args.ncluster, knn=args.knn)
+            labels = hierarchy(feat, n_clusters=args.ncluster, knn=args.knn)
         elif args.method == 'mini_batch_kmeans':
-            labels = cluster_func(feat, n_clusters=args.ncluster, batch_size=args.batch_size)
-        else:
-            labels = cluster_func(feat, n_clusters=args.ncluster)
+            labels = MiniBatchKMeans(feat, n_clusters=args.ncluster, batch_size=args.batch_size)
+        elif args.method == "approx_rank_order":
+            from approx_rank_order_cluster import build_index, calculate_symmetric_dist, perform_clustering
+            app_nearest_neighbors, dists = build_index(feat, n_neighbors=args.knn)
+            distance_matrix = calculate_symmetric_dist(app_nearest_neighbors)
+            labels = perform_clustering(feat, n_neighbors=args.knn)
+        elif args.method == "kmeans":
+            labels = KMeans(feat, n_clusters=args.ncluster)
+        elif args.method == "spectral":
+            labels = spectral(feat, n_clusters=args.ncluster)
 
-        np.save(ofn, labels)
+        with open(ofn, 'w') as f:
+            f.writelines(["{}\n".format(l) for l in labels])
+        print("#cluster: {}".format(len(np.unique(labels))))
         print("Save as: {}".format(ofn))
 
 
     if args.evaluate:
+        if not os.path.isfile("data/unlabeled/{}/meta.txt".format(args.data)):
+            raise Exception("Meta file not exist, please remove argument \"evaluate\" or create meta file: {}".format("data/unlabeled/{}/meta.txt".format(args.data)))
         lb2idxs, idx2lb, cls_num, inst_num = read_meta("data/unlabeled/{}/meta.txt".format(args.data))
         idx2lb = np.array(idx2lb)
         print('prec / recall / fscore: {:.4g}, {:.4g}, {:.4g}'.format(*eval_cluster.fscore(idx2lb, labels)))
