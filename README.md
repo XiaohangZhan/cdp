@@ -110,9 +110,9 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
 
 ### Run baselines
 
-We also implement several baseline clustering methods including: KMeans, MiniBatch-KMeans, Spectral, Hierarchical Agglomerative Clustering (HAC), FastHAC, DBSCAN, HDBSCAN, KNN DBSCAN, Approximate Rank-Order.
+* We also implement several baseline clustering methods including: KMeans, MiniBatch-KMeans, Spectral, Hierarchical Agglomerative Clustering (HAC), FastHAC, DBSCAN, HDBSCAN, KNN DBSCAN, Approximate Rank-Order.
 
-    ```
+    ```shell
     sh run_baselines.sh # results stored in `baseline_output/`
     ```
 
@@ -137,7 +137,7 @@ We also implement several baseline clustering methods including: KMeans, MiniBat
 | ApproxRankOrder (knn=20, th=10)       | 85150     | 52.96, 16.93, 25.66  | 86.4s                     |
 | ApproxRankOrder (knn=20, th=2)        | 97121     | 86.52, 9.495, 17.11  | 86.7s                     |
 
-note: We adjust parameters to achieve best performance of each method. Methods marked * need number of clusters as input. We use the ground truth number of clusters to report their upper bound results. But note that it is unknown in practical use.
+note: Methods marked * are reported with their theoretical upper bound results, since they need number of clusters as input and we use the values from the ground truth. For each method, we adjust the parameters to achieve the best performance.
 
 * **CDP**
 
