@@ -27,7 +27,7 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
 
 #### Using ready-made data
 
-1. Download the data [here](https://drive.google.com/open?id=1JUgMcD0NRAL--SeJyXKRwszeTAlAiVhS) to the repo root, and uncompress it.
+1. Download the data [here](https://drive.google.com/open?id=1Fs8oN1JiGJRC93TkfDV-PaCeXQz-Htea) to the repo root, and uncompress it.
 
     ```shell
     tar -xf data.tar.gz
