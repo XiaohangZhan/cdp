@@ -5,6 +5,12 @@ import json
 import pickle
 import time
 import sklearn.cluster as cluster
+import multiprocessing
+import sys
+sys.path.append("source")
+import eval_cluster
+
+import pdb
 
 class Timer:
     DEBUG = True
@@ -57,7 +63,7 @@ def read_meta(fn_meta):
     lb2idxs = {}
     lbs = []
     with open(fn_meta) as f:
-        for idx, x in enumerate(f.readlines()[1:]):
+        for idx, x in enumerate(f.readlines()):
             lb = int(x.strip())
             if lb not in lb2idxs:
                 lb2idxs[lb] = []
@@ -66,7 +72,6 @@ def read_meta(fn_meta):
 
     inst_num = len(lbs)
     cls_num = len(lb2idxs)
-    print('#cls: {}, #inst: {}'.format(cls_num, inst_num))
     return lb2idxs, lbs, cls_num, inst_num
 
 def labels2clusters(labels):
@@ -81,7 +86,7 @@ def labels2clusters(labels):
 
 def KMeans(feat, n_clusters=2):
     kmeans = cluster.KMeans(n_clusters=n_clusters,
-                            n_jobs=8,
+                            n_jobs=multiprocessing.cpu_count(),
                             random_state=0).fit(feat)
     return kmeans.labels_
 
@@ -122,12 +127,12 @@ def fast_hierarchy(feat, distance=0.7, hmethod='single'):
 
 
 def dbscan(feat, eps=0.3, min_samples=10):
-    db = cluster.DBSCAN(eps=eps, min_samples=min_samples, n_jobs=8).fit(feat)
+    db = cluster.DBSCAN(eps=eps, min_samples=min_samples, n_jobs=multiprocessing.cpu_count()).fit(feat)
     return db.labels_
 
 
 def knn_dbscan(sparse_affinity, eps=0.75, min_samples=10):
-    db = cluster.DBSCAN(eps=eps, min_samples=min_samples, n_jobs=8, metric='precomputed').fit(sparse_affinity)
+    db = cluster.DBSCAN(eps=eps, min_samples=min_samples, n_jobs=multiprocessing.cpu_count(), metric='precomputed').fit(sparse_affinity)
     return db.labels_
 
 
@@ -145,16 +150,16 @@ if __name__ == '__main__':
     parser.add_argument('--feat-dim', default=256, type=int)
     parser.add_argument('--ncluster', default=1000, type=int)
     parser.add_argument('--batch-size', default=100, type=int)
-    parser.add_argument('--eps', default=0.7, type=float)
+    parser.add_argument('--eps', default=0.75, type=float)
     parser.add_argument('--min-samples', default=10, type=int)
     parser.add_argument('--knn', default=30, type=int)
     parser.add_argument('--hmethod', default='single', type=str)
     parser.add_argument('--method', type=str)
+    parser.add_argument('--evaluate', action='store_true')
     parser.add_argument('--force', action='store_true')
     args = parser.parse_args()
 
     assert args.method
-    assert 1 <= args.split_num <= 9
 
     method2op = {
         'kmeans': KMeans,
@@ -167,36 +172,43 @@ if __name__ == '__main__':
         'knn_dbscan': knn_dbscan,
     }
 
-    cluster_func = method2op[args.method]
 
+    start = time.time()
+
+    with open("data/unlabeled/{}/list.txt".format(args.data), 'r') as f:
+        fns = f.readlines()
+    inst_num = len(fns)
+    cluster_func = method2op[args.method]
     ofn_prefix = 'baseline_output/'
+    print("Method: {}".format(args.method))
 
     if args.method == 'dbscan' or args.method == 'knn_dbscan':
-        ofn = os.path.join(ofn_prefix, '{}_{}_eps_{}_min_{}/clusters.json'.format(args.data, args.method, args.eps, args.min_samples))
+        ofn = os.path.join(ofn_prefix, '{}_{}_eps_{}_min_{}/clusters.npy'.format(args.data, args.method, args.eps, args.min_samples))
     elif args.method == 'hdbscan':
-        ofn = os.path.join(ofn_prefix, '{}_{}_min_{}/clusters.json'.format(args.data, args.method, args.min_samples))
+        ofn = os.path.join(ofn_prefix, '{}_{}_min_{}/clusters.npy'.format(args.data, args.method, args.min_samples))
     elif args.method == 'fast_hierarchy':
-        ofn = os.path.join(ofn_prefix, '{}_{}_eps_{}_hmethod_{}/clusters.json'.format(args.data, args.method, args.eps, args.hmethod))
+        ofn = os.path.join(ofn_prefix, '{}_{}_eps_{}_hmethod_{}/clusters.npy'.format(args.data, args.method, args.eps, args.hmethod))
     elif args.method == 'hierarchy':
-        ofn = os.path.join(ofn_prefix, '{}_{}_ncluster_{}_knn_{}/clusters.json'.format(args.data, args.method, args.ncluster, args.knn))
+        ofn = os.path.join(ofn_prefix, '{}_{}_ncluster_{}_knn_{}/clusters.npy'.format(args.data, args.method, args.ncluster, args.knn))
     elif args.method == 'mini_batch_kmeans':
-        ofn = os.path.join(ofn_prefix, '{}_{}_ncluster_{}_bs_{}/clusters.json'.format(args.data, args.method, args.ncluster, args.batch_size))
+        ofn = os.path.join(ofn_prefix, '{}_{}_ncluster_{}_bs_{}/clusters.npy'.format(args.data, args.method, args.ncluster, args.batch_size))
     else:
-        ofn = os.path.join(ofn_prefix, '{}_{}_ncluster_{}/clusters.json'.format(args.data, args.method, args.ncluster))
+        ofn = os.path.join(ofn_prefix, '{}_{}_ncluster_{}/clusters.npy'.format(args.data, args.method, args.ncluster))
 
     if os.path.exists(ofn) and not args.force:
-        print('{} has already existed. Please set force=True to overwrite.'.format(ofn))
-        exit()
-    if not os.path.exists(os.path.dirname(ofn)):
-        os.makedirs(os.path.dirname(ofn))
+        label = np.load(ofn)
 
-    feat_dim = args.feat_dim
+    else:
+        if not os.path.exists(os.path.dirname(ofn)):
+            os.makedirs(os.path.dirname(ofn))
+    
+        feat_dim = args.feat_dim
+    
 
-    lb2idxs, idx2lb, cls_num, inst_num = read_meta("data/unlabeled/{}/meta.txt".format(args.data))
-    feat = np.fromfile("data/unlabeled/{}/features/{}.bin".format(args.data, args.feature), dtype=np.float32, count=inst_num*feat_dim).reshape(inst_num, feat_dim)
-    feat = normalize(feat)
-
-    with Timer('{}'.format(args.method)):
+    
+        feat = np.fromfile("data/unlabeled/{}/features/{}.bin".format(args.data, args.feature), dtype=np.float32, count=inst_num*feat_dim).reshape(inst_num, feat_dim)
+        feat = normalize(feat)
+    
         if args.method == 'dbscan':
             labels = cluster_func(feat, eps=args.eps, min_samples=args.min_samples)
         elif args.method == 'knn_dbscan':
@@ -227,8 +239,13 @@ if __name__ == '__main__':
         else:
             labels = cluster_func(feat, n_clusters=args.ncluster)
 
-        clusters = labels2clusters(labels)
-        # dump to json
-        print('dump clusters to', ofn)
-        dump2json(ofn, clusters, force=args.force)
+        np.save(ofn, labels)
+        print("Save as: {}".format(ofn))
 
+
+    if args.evaluate:
+        lb2idxs, idx2lb, cls_num, inst_num = read_meta("data/unlabeled/{}/meta.txt".format(args.data))
+        idx2lb = np.array(idx2lb)
+        print('prec / recall / fscore: {:.4g}, {:.4g}, {:.4g}'.format(*eval_cluster.fscore(idx2lb, labels)))
+
+    print("time: {:.2f} s".format(time.time() - start))
