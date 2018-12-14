@@ -144,7 +144,7 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
     | k  | strategy | committee | setting         | prec, recall, fscore | knn time | cluster time | total time |
     |----|----------|-----------|-----------------|----------------------|----------|--------------|------------|
     | 15 | vote     | 0         | accept0_th0.66  | 89.35, 88.98, 89.16  | 14.8s    | 7.7s         | 22.5s      |
-    | 15 | vote     | 4         | accept4_th0.605 | 93.36, 92.91, 93.13  | 78.7s    | 6.0s         | 84.7s      |
+    | 15 | vote     | 4         | accept4_th0.61  | 93.36, 92.91, 93.13  | 78.7s    | 6.0s         | 84.7s      |
     | 15 | mediator | 4         | 110_th0.9938    | 94.06, 92.45, 93.25  | 78.7s    | 77.7s        | 156.4s     |
     | 15 | mediator | 4         | 111_th0.9925    | 96.66, 94.93, 95.79  | 78.7s    | 100.2s       | 178.9s     |
     
