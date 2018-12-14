@@ -118,37 +118,50 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
 
 ### Evaluation Results
 
-* data: emore_u200k (This data set is not the one in the paper which cannot be released, but the relative results are similar.)
+1. data: emore_u200k (This data set is not the one in the paper which cannot be released, but the relative results are similar.)
     * images number: 200K;
     * identity number: 2577 (original annotation)
 
-* **baselines**
+    * **baselines**
 
-| method                                | #clusters | prec, recall, fscore | time                      |
-|---------------------------------------|-----------|----------------------|---------------------------|
-| * kmeans (ncluster=2577)              | 2577      | 94.24, 74.89, 83.45  | 618.1s                    |
-| * MiniBatchKMeans (ncluster=2577)     | 2577      | 89.98, 87.86, 88.91  | 122.8s                    |
-| * Spectral (ncluster=2577)            | 2577      | 97.42, 97.05, 97.24  | 12.1h                     |
-| * HAC (ncluster=2577, knn=30)         | 2577      | 97.74, 88.02, 92.62  | 5.65h                     |
-| FastHAC (distance=0.7, method=single) | 46767     | 99.79, 53.18, 69.38  | 1.66h                     |
-| DBSCAN (eps=0.75, nim_samples=10)     | 2330      | 0.6775, 73.77, 1.343 | 6.87h                     |
-| HDBSCAN (min_samples=10)              | 2516      | 2.214, 79.87, 4.308  | 4.87h                     |
-| KNN DBSCAN (knn=80, min_samples=10)   | 2494      | 1.358, 78.99, 2.669  | 60.5s (knn time included) |
-| ApproxRankOrder (knn=20, th=10)       | 85150     | 52.96, 16.93, 25.66  | 86.4s                     |
-| ApproxRankOrder (knn=20, th=2)        | 97121     | 86.52, 9.495, 17.11  | 86.7s                     |
+    | method                                | #clusters | prec, recall, fscore | time                      |
+    |---------------------------------------|-----------|----------------------|---------------------------|
+    | * kmeans (ncluster=2577)              | 2577      | 94.24, 74.89, 83.45  | 618.1s                    |
+    | * MiniBatchKMeans (ncluster=2577)     | 2577      | 89.98, 87.86, 88.91  | 122.8s                    |
+    | * Spectral (ncluster=2577)            | 2577      | 97.42, 97.05, 97.24  | 12.1h                     |
+    | * HAC (ncluster=2577, knn=30)         | 2577      | 97.74, 88.02, 92.62  | 5.65h                     |
+    | FastHAC (distance=0.7, method=single) | 46767     | 99.79, 53.18, 69.38  | 1.66h                     |
+    | DBSCAN (eps=0.75, nim_samples=10)     | 2330      | 0.6775, 73.77, 1.343 | 6.87h                     |
+    | HDBSCAN (min_samples=10)              | 2516      | 2.214, 79.87, 4.308  | 4.87h                     |
+    | KNN DBSCAN (knn=80, min_samples=10)   | 2494      | 1.358, 78.99, 2.669  | 60.5s (knn time included) |
+    | ApproxRankOrder (knn=20, th=10)       | 85150     | 52.96, 16.93, 25.66  | 86.4s                     |
+    | ApproxRankOrder (knn=20, th=2)        | 97121     | 86.52, 9.495, 17.11  | 86.7s                     |
 
-note: Methods marked * are reported with their theoretical upper bound results, since they need number of clusters as input and we use the values from the ground truth. For each method, we adjust the parameters to achieve the best performance.
+    note: Methods marked * are reported with their theoretical upper bound results, since they need number of clusters as input and we use the values from the ground truth. For each method, we adjust the parameters to achieve the best performance.
 
-* **CDP**
+    * **CDP**
 
-| k  | strategy | committee | setting         | prec, recall, fscore | knn time | cluster time | total time |
-|----|----------|-----------|-----------------|----------------------|----------|--------------|------------|
-| 15 | vote     | 0         | accept0_th0.66  | 89.35, 88.98, 89.16  | 14.8s    | 7.7s         | 22.5s      |
-| 15 | vote     | 4         | accept4_th0.605 | 93.36, 92.91, 93.13  | 78.7s    | 6.0s         | 84.7s      |
-| 15 | mediator | 4         | 110_th0.9938    | 94.06, 92.45, 93.25  | 78.7s    | 77.7s        | 156.4s     |
-| 15 | mediator | 4         | 111_th0.9925    | 96.66, 94.93, 95.79  | 78.7s    | 100.2s       | 178.9s     |
+    | k  | strategy | committee | setting         | prec, recall, fscore | knn time | cluster time | total time |
+    |----|----------|-----------|-----------------|----------------------|----------|--------------|------------|
+    | 15 | vote     | 0         | accept0_th0.66  | 89.35, 88.98, 89.16  | 14.8s    | 7.7s         | 22.5s      |
+    | 15 | vote     | 4         | accept4_th0.605 | 93.36, 92.91, 93.13  | 78.7s    | 6.0s         | 84.7s      |
+    | 15 | mediator | 4         | 110_th0.9938    | 94.06, 92.45, 93.25  | 78.7s    | 77.7s        | 156.4s     |
+    | 15 | mediator | 4         | 111_th0.9925    | 96.66, 94.93, 95.79  | 78.7s    | 100.2s       | 178.9s     |
+    
+    note: for mediator, `110` means using `relationship` and `affinity`; `111` means using `relationship`, `affinity` and `structure`.
 
-note: for mediator, `110` means using `relationship` and `affinity`; `111` means using `relationship`, `affinity` and `structure`.
+2. data: emore_u1.4m
+    * images number: 1.4M;
+    * identity number: 21433 (original annotation)
+
+    * **CDP**
+    
+    | k  | strategy | committee | setting        | prec, recall, fscore | knn time | cluster time | total time |
+    |----|----------|-----------|----------------|----------------------|----------|--------------|------------|
+    | 15 | vote     | 0         | accept0_th0.68 | 89.49, 81.25, 85.17  | 187.5s   | 47.7s        | 235.2s     |
+    | 15 | vote     | 4         | accept4_th0.62 | 90.63, 87.32, 88.95  | 967.0s   | 44.3s        | 1011.3s    |
+    | 15 | mediator | 4         | 110_th0.99     | 93.67, 84.43, 88.81  | 967.0s   | 406.9s       | 1373.9s    |
+    | 15 | mediator | 4         | 111_th0.982    | 95.29, 90.97, 93.08  | 967.0s   | 584.7s       | 1551.7s    |
 
 ### Bibtex
 ```
