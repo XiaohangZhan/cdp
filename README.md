@@ -124,20 +124,19 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
 
     * **baselines**
 
-    | method                                | #clusters | prec, recall, fscore | time                      |
-    |---------------------------------------|-----------|----------------------|---------------------------|
-    | * kmeans (ncluster=2577)              | 2577      | 94.24, 74.89, 83.45  | 618.1s                    |
-    | * MiniBatchKMeans (ncluster=2577)     | 2577      | 89.98, 87.86, 88.91  | 122.8s                    |
-    | * Spectral (ncluster=2577)            | 2577      | 97.42, 97.05, 97.24  | 12.1h                     |
-    | * HAC (ncluster=2577, knn=30)         | 2577      | 97.74, 88.02, 92.62  | 5.65h                     |
-    | FastHAC (distance=0.7, method=single) | 46767     | 99.79, 53.18, 69.38  | 1.66h                     |
-    | DBSCAN (eps=0.75, nim_samples=10)     | 2330      | 0.6775, 73.77, 1.343 | 6.87h                     |
-    | HDBSCAN (min_samples=10)              | 2516      | 2.214, 79.87, 4.308  | 4.87h                     |
-    | KNN DBSCAN (knn=80, min_samples=10)   | 2494      | 1.358, 78.99, 2.669  | 60.5s (knn time included) |
-    | ApproxRankOrder (knn=20, th=10)       | 85150     | 52.96, 16.93, 25.66  | 86.4s                     |
-    | ApproxRankOrder (knn=20, th=2)        | 97121     | 86.52, 9.495, 17.11  | 86.7s                     |
+    | method                                | #clusters | prec, recall, fscore | total time |
+    |---------------------------------------|-----------|----------------------|------------|
+    | * kmeans (ncluster=2577)              | 2577      | 94.24, 74.89, 83.45  | 618.1s     |
+    | * MiniBatchKMeans (ncluster=2577)     | 2577      | 89.98, 87.86, 88.91  | 122.8s     |
+    | * Spectral (ncluster=2577)            | 2577      | 97.42, 97.05, 97.24  | 12.1h      |
+    | * HAC (ncluster=2577, knn=30)         | 2577      | 97.74, 88.02, 92.62  | 5.65h      |
+    | FastHAC (distance=0.7, method=single) | 46767     | 99.79, 53.18, 69.38  | 1.66h      |
+    | DBSCAN (eps=0.75, nim_samples=10)     | 2330      | 0.6775, 73.77, 1.343 | 6.87h      |
+    | HDBSCAN (min_samples=10)              | 2516      | 2.214, 79.87, 4.308  | 4.87h      |
+    | KNN DBSCAN (knn=80, min_samples=10)   | 2494      | 1.358, 78.99, 2.669  | 60.5s      |
+    | ApproxRankOrder (knn=20, th=10)       | 85150     | 52.96, 16.93, 25.66  | 86.4s      |
 
-    note: Methods marked * are reported with their theoretical upper bound results, since they need number of clusters as input and we use the values from the ground truth. For each method, we adjust the parameters to achieve the best performance.
+    note: Methods marked * are reported with their theoretical upper bound results, since they need number of clusters as input. We use the values from the ground truth to obtain the results. For each method, we adjust the parameters to achieve the best performance.
 
     * **CDP**
 
