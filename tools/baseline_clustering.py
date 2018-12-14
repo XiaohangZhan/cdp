@@ -2,7 +2,7 @@ import os
 import argparse
 import numpy as np
 import json
-import pickle
+import datetime
 import time
 import sklearn.cluster as cluster
 import multiprocessing
@@ -156,6 +156,7 @@ if __name__ == '__main__':
 
 
     start = time.time()
+    print("Start time: {}".format(datetime.datetime.now().strftime("%m-%d %H:%M:%S")))
 
     with open("data/unlabeled/{}/list.txt".format(args.data), 'r') as f:
         fns = f.readlines()
@@ -238,6 +239,8 @@ if __name__ == '__main__':
         print("#cluster: {}".format(len(np.unique(labels))))
         print("Save as: {}".format(ofn))
 
+
+    print("End time: {}".format(datetime.datetime.now().strftime("%m-%d %H:%M:%S")))
 
     if args.evaluate:
         if not os.path.isfile("data/unlabeled/{}/meta.txt".format(args.data)):
