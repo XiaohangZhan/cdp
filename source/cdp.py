@@ -140,16 +140,11 @@ def vote(output, args):
 
     if not os.path.isfile(output + '/vote_pairs.npy'):
         log('Extracting pairs by voting ...')
-        #with open(base_knn_fn, 'r') as f:
-        #    knn_base = json.load(f)
         knn_file = np.load(base_knn_fn)
         knn_base = (knn_file['idx'], knn_file['dist'])
 
         knn_committee = []
         for i,cfn in enumerate(committee_knn_fn):
-            #with open(cfn, 'r') as f:
-            #    knn_cmt = json.load(f)
-            #    knn_committee.append(knn_cmt)
             knn_file = np.load(cfn)
             knn_committee.append((knn_file['idx'], knn_file['dist']))
 

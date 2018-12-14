@@ -128,7 +128,7 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
 |---------------------------------------|-----------|----------------------|---------------------------|
 | * kmeans (ncluster=2577)              | 2577      | 94.24, 74.89, 83.45  | 618.1s                    |
 | * MiniBatchKMeans (ncluster=2577)     | 2577      | 89.98, 87.86, 88.91  | 122.8s                    |
-| * Spectral (ncluster=2577)            | 2577      |                      |                           |
+| * Spectral (ncluster=2577)            | 2577      | 97.42, 97.05, 97.24  | 12.1h                     |
 | * HAC (ncluster=2577, knn=30)         | 2577      | 97.74, 88.02, 92.62  | 5.65h                     |
 | FastHAC (distance=0.7, method=single) | 46767     | 99.79, 53.18, 69.38  | 1.66h                     |
 | DBSCAN (eps=0.75, nim_samples=10)     | 2330      | 0.6775, 73.77, 1.343 | 6.87h                     |
@@ -143,10 +143,10 @@ note: Methods marked * are reported with their theoretical upper bound results, 
 
 | k  | strategy | committee | setting         | prec, recall, fscore | knn time | cluster time | total time |
 |----|----------|-----------|-----------------|----------------------|----------|--------------|------------|
-| 15 | vote     |     0     | accept0_th0.66  | 89.35, 88.98, 89.16  |   14.8s  |     7.7s     |    22.5s   |
-| 15 | vote     |     4     | accept4_th0.605 | 93.36, 92.91, 93.13  |   78.7s  |     6.0s     |    84.7s   |
-| 15 | mediator |     4     | 110_th0.9938    | 94.06, 92.45, 93.25  |   78.7s  |     77.7s    |   156.4s   |
-| 15 | mediator |     4     | 111_th0.9925    | 96.66, 94.93, 95.79  |   78.7s  |    137.8s    |   216.5s   |
+| 15 | vote     | 0         | accept0_th0.66  | 89.35, 88.98, 89.16  | 14.8s    | 7.7s         | 22.5s      |
+| 15 | vote     | 4         | accept4_th0.605 | 93.36, 92.91, 93.13  | 78.7s    | 6.0s         | 84.7s      |
+| 15 | mediator | 4         | 110_th0.9938    | 94.06, 92.45, 93.25  | 78.7s    | 77.7s        | 156.4s     |
+| 15 | mediator | 4         | 111_th0.9925    | 96.66, 94.93, 95.79  | 78.7s    | 100.2s       | 178.9s     |
 
 note: for mediator, `110` means using `relationship` and `affinity`; `111` means using `relationship`, `affinity` and `structure`.
 

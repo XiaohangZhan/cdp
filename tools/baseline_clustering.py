@@ -193,7 +193,7 @@ if __name__ == '__main__':
         feat = normalize(feat)
     
         if args.method == 'dbscan':
-            labels = KMeans(feat, eps=args.eps, min_samples=args.min_samples)
+            labels = dbscan(feat, eps=args.eps, min_samples=args.min_samples)
         elif args.method == 'knn_dbscan':
             from scipy.sparse import csr_matrix
             # load knn and construct sparse mat
@@ -222,14 +222,14 @@ if __name__ == '__main__':
         elif args.method == 'hierarchy':
             labels = hierarchy(feat, n_clusters=args.ncluster, knn=args.knn)
         elif args.method == 'mini_batch_kmeans':
-            labels = MiniBatchKMeans(feat, n_clusters=args.ncluster, batch_size=args.batch_size)
+            labels = MiniBatchKMeans(feat.astype(np.float64), n_clusters=args.ncluster, batch_size=args.batch_size)
         elif args.method == "approx_rank_order":
             from approx_rank_order_cluster import build_index, calculate_symmetric_dist, perform_clustering
             app_nearest_neighbors, dists = build_index(feat, n_neighbors=args.knn)
             distance_matrix = calculate_symmetric_dist(app_nearest_neighbors)
             labels = perform_clustering(feat, n_neighbors=args.knn, th=args.aro_th)
         elif args.method == "kmeans":
-            labels = KMeans(feat, n_clusters=args.ncluster)
+            labels = KMeans(feat.astype(np.float64), n_clusters=args.ncluster)
         elif args.method == "spectral":
             labels = spectral(feat, n_clusters=args.ncluster)
 

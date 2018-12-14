@@ -34,13 +34,25 @@ def get_affinity_feat(features, pairs):
     log('\t\taffinity feature done. time: {}'.format(time.time() - start))
     return np.concatenate(cosine_simi, axis=1)
 
+def intersection(array1, array2):
+    '''
+    To find row wise intersection size.
+    Input: array1, array2: Nxk np array
+    '''
+    N, k = array1.shape
+    tile1 = np.tile(array1.reshape(N, k, 1), (1, 1, k))
+    tile2 = np.tile(array2.reshape(N, 1, k), (1, k, 1))
+    inter_num = ((tile1 == tile2) & (tile1 != -1) & (tile2 != -1)).sum(axis=(1,2))
+    return inter_num
+
 def get_structure_feat(members, pairs):
     start = time.time()
     distr_commnb = []
     for i,m in enumerate(members):
         log("\t\tprocessing: {}/{}".format(i, len(members)))
         knn = m[0]
-        comm_neighbor = np.array([len(np.intersect1d(knn[p[0]], knn[p[1]], assume_unique=True)) for p in pairs]).astype(np.float32)[:,np.newaxis]
+        #comm_neighbor = np.array([len(np.intersect1d(knn[p[0]], knn[p[1]], assume_unique=True)) for p in pairs]).astype(np.float32)[:,np.newaxis]
+        comm_neighbor = intersection(knn[pairs[:,0], :], knn[pairs[:,1], :])[:, np.newaxis]
         distr_commnb.append(comm_neighbor)
     log('\t\tstructure feature done. time: {}'.format(time.time() - start))
     return np.hstack(distr_commnb)
