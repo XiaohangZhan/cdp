@@ -11,7 +11,10 @@ Project Page:
 [link](http://mmlab.ie.cuhk.edu.hk/projects/CDP/)
 
 ### Dependency
-Please use Python3, as we cannot guarantee its compatibility with python2. The version of PyTorch we use is 0.3.1. Other depencencies:
+
+* Please use python3, as we cannot guarantee its compatibility with python2.
+* The version of PyTorch we use is 0.3.1.
+* Other depencencies:
 
     ```
     pip install nmslib
