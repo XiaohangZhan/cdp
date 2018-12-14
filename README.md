@@ -80,7 +80,7 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
 
 3. (optional) If you want to evaluate the performance on your data, prepare the meta file as `meta.txt` and copy it to the directory.
 
-4. Prepare your feature files. Extract face features corresponding to the `list.txt` with your trained face models, and save it as binary files via `feature.tofile("xxx.bin")` in numpy. Finally link/copy them to `data/unlabeled/mydata/features/`. We recommand renaming the feature files using model names, e.g., `resnet18.bin`. CDP works for single model case, but we recommend you to use multiple models (i.e., preparing multiple feature files extracted from different models) with `mediator` for better results.
+4. Prepare your feature files. Extract face features corresponding to the `list.txt` with your trained face models, and save it as binary files via `feature.tofile("xxx.bin")` in numpy. The features should satisfy `Cosine Similarity` condition. Finally link/copy them to `data/unlabeled/mydata/features/`. We recommand renaming the feature files using model names, e.g., `resnet18.bin`. CDP works for single model case, but we recommend you to use multiple models (i.e., preparing multiple feature files extracted from different models) with `mediator` for better results.
 
 5. The structure should look like:
 
@@ -120,7 +120,7 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
 
 1. data: emore_u200k (This data set is not the one in the paper which cannot be released, but the relative results are similar.)
     * images number: 200K;
-    * identity number: 2577 (original annotation)
+    * identity number: 2,577 (original annotation)
 
     * **baselines**
 
@@ -152,7 +152,7 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
 
 2. data: emore_u1.4m
     * images number: 1.4M;
-    * identity number: 21433 (original annotation)
+    * identity number: 21,433 (original annotation)
 
     * **CDP**
     
@@ -162,6 +162,8 @@ Please use Python3, as we cannot guarantee its compatibility with python2. The v
     | 15 | vote     | 4         | accept4_th0.62 | 90.63, 87.32, 88.95  | 967.0s   | 44.3s        | 1011.3s    |
     | 15 | mediator | 4         | 110_th0.99     | 93.67, 84.43, 88.81  | 967.0s   | 406.9s       | 1373.9s    |
     | 15 | mediator | 4         | 111_th0.982    | 95.29, 90.97, 93.08  | 967.0s   | 584.7s       | 1551.7s    |
+
+    note: the `cluster time` of CDP increases to less than 7 times when the amount of data increases to 7 times. Nearly all the baseline methods fail in this case with 1.4M data, either out of memory or with low performance.
 
 ### Bibtex
 ```
