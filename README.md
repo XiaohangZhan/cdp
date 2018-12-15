@@ -121,11 +121,16 @@ Project Page:
 
 ### Evaluation Results
 
-1. data: emore_u200k (This data set is not the one in the paper which cannot be released, but the relative results are similar.)
-    * images number: 200K;
-    * identity number: 2,577 (original annotation)
+1. Data
+    
+    * emore_u200k (images: 200K, identities: 2,577)
+    * emore_u600k (images: 600K, identities: 8,436)
+    * emore_u1.4m (images: 1.4M, identities: 21,433)
+    (These datasets are not the one in the paper which cannot be released, but the relative results are similar.)
 
-    * **baselines**
+2. Baselines
+
+    * emore_u200k
 
     | method                                | #clusters | prec, recall, fscore | total time |
     |---------------------------------------|-----------|----------------------|------------|
@@ -139,9 +144,25 @@ Project Page:
     | KNN DBSCAN (knn=80, min_samples=10)   | 2494      | 1.358, 78.99, 2.669  | 60.5s      |
     | ApproxRankOrder (knn=20, th=10)       | 85150     | 52.96, 16.93, 25.66  | 86.4s      |
 
+    * emore_u600k
+
+    | method                                | #clusters | prec, recall, fscore | total time |
+    |---------------------------------------|-----------|----------------------|------------|
+    | * kmeans (ncluster=8436)              | 8436      | fail (out of memory) | -          |
+    | * MiniBatchKMeans (ncluster=8436)     | 8436      |                      |            |
+    | * Spectral (ncluster=8436)            | 8436      |                      |            |
+    | * HAC (ncluster=8436, knn=30)         | 8436      |                      |            |
+    | FastHAC (distance=0.7, method=single) | 94949     | 98.75, 68.49, 80.88  | 16.3h      |
+    | DBSCAN (eps=0.75, nim_samples=10)     |           |                      |            |
+    | HDBSCAN (min_samples=10)              |           |                      |            |
+    | KNN DBSCAN (knn=80, min_samples=10)   | 8006      | 0.2997, 76.8, 0.5972 | 644.5s     |
+    | ApproxRankOrder (knn=30, th=10)       | 304022    | 65.56, 8.139, 14.48  | 626.9s     |
+
     note: Methods marked * are reported with their theoretical upper bound results, since they need number of clusters as input. We use the values from the ground truth to obtain the results. For each method, we adjust the parameters to achieve the best performance.
 
-    * **CDP**
+3. CDP
+
+    * emore_u200k
 
     | strategy | #model | setting             | prec, recall, fscore | knn time | cluster time | total time |
     |----------|--------|---------------------|----------------------|----------|--------------|------------|
@@ -150,13 +171,16 @@ Project Page:
     | mediator | 5      | k15_110_th0.9938    | 94.06, 92.45, 93.25  | 78.7s    | 77.7s        | 156.4s     |
     | mediator | 5      | k15_111_th0.9925    | 96.66, 94.93, 95.79  | 78.7s    | 100.2s       | 178.9s     |
 
-    note: for mediator, `110` means using `relationship` and `affinity`; `111` means using `relationship`, `affinity` and `structure`.
+    * emore_u600k
 
-2. data: emore_u1.4m
-    * images number: 1.4M;
-    * identity number: 21,433 (original annotation)
+    | strategy | #model | setting             | prec, recall, fscore | knn time | cluster time | total time |
+    |----------|--------|---------------------|----------------------|----------|--------------|------------|
+    | vote     | 1      | k15_accept0_th0.665 | 88.19, 85.33, 86.74  | 60.8s    | 24s          | 84.8s      |
+    | vote     | 5      | k15_accept4_th0.605 | 90.21, 89.9, 90.05   | 309.4s   | 18.3s        | 327.7s     |
+    | mediator | 5      | k15_110_th0.985     | 90.43, 89.13, 89.78  | 309.4s   | 184.2s       | 493.6s     |
+    | mediator | 5      | k15_111_th0.982     | 96.55, 91.98, 94.21  | 309.4s   | 246.3s       | 555.7s     |
 
-    * **CDP**
+    * emore_u1.6m
 
     | strategy | #model | setting            | prec, recall, fscore | knn time | cluster time | total time |
     |----------|--------|--------------------|----------------------|----------|--------------|------------|
@@ -165,7 +189,8 @@ Project Page:
     | mediator | 5      | k15_110_th0.99     | 93.67, 84.43, 88.81  | 967.0s   | 406.9s       | 1373.9s    |
     | mediator | 5      | k15_111_th0.982    | 95.29, 90.97, 93.08  | 967.0s   | 584.7s       | 1551.7s    |   
 
-    note: the `cluster time` of CDP increases to less than 7 times when the amount of data increases to 7 times. Nearly all the baseline methods fail in this case with 1.4M data, either out of memory or with low performance.
+    note: ;
+    * For mediator, `110` means using `relationship` and `affinity`; `111` means using `relationship`, `affinity` and `structure`.
 
 ### Bibtex
 ```

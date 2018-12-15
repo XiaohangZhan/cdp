@@ -12,7 +12,7 @@ data
 source.sh
 run.sh
 run_baseline.sh
-results.txt
+results.md
 hide
 emore_u1.4m_single
 baseline_output
