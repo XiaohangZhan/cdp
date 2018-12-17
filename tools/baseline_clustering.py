@@ -181,9 +181,9 @@ if __name__ == '__main__':
 
     if os.path.exists(ofn) and not args.force:
         with open(ofn, 'r') as f:
-            labels = f.readlines()
-        labels = np.array([int(l.strip()) for l in labels])
-        print("********\nWarning: the result is loaded from file: {}. If you want to overwrite it, set \"--force\"\n********".format(ofn))
+            pred = f.readlines()
+        pred = np.array([int(l.strip()) for l in pred])
+        print("********\nWarning: the result is loaded from file: {} If you want to overwrite it, set \"--force\"\n********".format(ofn))
 
     else:
         if not os.path.exists(os.path.dirname(ofn)):
@@ -194,7 +194,7 @@ if __name__ == '__main__':
         feat = normalize(feat)
     
         if args.method == 'dbscan':
-            labels = dbscan(feat, eps=args.eps, min_samples=args.min_samples)
+            pred = dbscan(feat, eps=args.eps, min_samples=args.min_samples)
         elif args.method == 'knn_dbscan':
             from scipy.sparse import csr_matrix
             # load knn and construct sparse mat
@@ -215,39 +215,52 @@ if __name__ == '__main__':
                     data.append(dist)
             sparse_affinity = csr_matrix((data, (row, col)), shape=(inst_num, inst_num))
             # clustering
-            labels = knn_dbscan(sparse_affinity, eps=args.eps, min_samples=args.min_samples)
+            pred = knn_dbscan(sparse_affinity, eps=args.eps, min_samples=args.min_samples)
         elif args.method == 'hdbscan':
-            labels = hdbscan(feat, min_samples=args.min_samples)
+            perd = hdbscan(feat, min_samples=args.min_samples)
         elif args.method == 'fast_hierarchy':
-            labels = fast_hierarchy(feat, distance=args.eps, hmethod=args.hmethod)
+            pred = fast_hierarchy(feat, distance=args.eps, hmethod=args.hmethod)
         elif args.method == 'hierarchy':
-            labels = hierarchy(feat, n_clusters=args.ncluster, knn=args.knn)
+            pred = hierarchy(feat, n_clusters=args.ncluster, knn=args.knn)
         elif args.method == 'mini_batch_kmeans':
-            labels = MiniBatchKMeans(feat.astype(np.float64), n_clusters=args.ncluster, batch_size=args.batch_size)
+            pred = MiniBatchKMeans(feat.astype(np.float64), n_clusters=args.ncluster, batch_size=args.batch_size)
         elif args.method == "approx_rank_order":
             from approx_rank_order_cluster import build_index, calculate_symmetric_dist, perform_clustering
             app_nearest_neighbors, dists = build_index(feat, n_neighbors=args.knn)
             distance_matrix = calculate_symmetric_dist(app_nearest_neighbors)
-            labels = perform_clustering(feat, n_neighbors=args.knn, th=args.aro_th)
+            pred= perform_clustering(feat, n_neighbors=args.knn, th=args.aro_th)
         elif args.method == "kmeans":
-            labels = KMeans(feat.astype(np.float64), n_clusters=args.ncluster)
+            pred= KMeans(feat.astype(np.float64), n_clusters=args.ncluster)
         elif args.method == "spectral":
-            labels = spectral(feat, n_clusters=args.ncluster)
+            pred = spectral(feat, n_clusters=args.ncluster)
 
+        # post process
+        valid = np.where(pred != -1)
+        _, unique_idx = np.unique(pred[valid], return_index=True)
+        pred_unique = pred[valid][np.sort(unique_idx)]
+        pred_mapping = dict(zip(list(pred_unique), range(pred_unique.shape[0])))
+        pred_mapping[-1] = -1
+        pred = np.array([pred_mapping[p] for p in pred])
+    
+        print("Discard ratio: {:.4g}".format(1 - len(valid[0]) / float(len(pred))))
+
+        # save
         with open(ofn, 'w') as f:
-            f.writelines(["{}\n".format(l) for l in labels])
-        print("#cluster: {}".format(len(np.unique(labels))))
+            f.writelines(["{}\n".format(l) for l in pred])
         print("Save as: {}".format(ofn))
 
-
+    num_class_valid = len(np.unique(pred[np.where(pred != -1)]))
+    pred_with_singular = pred.copy()
+    pred_with_singular[np.where(pred == -1)] = np.arange(num_class_valid, num_class_valid + (pred == -1).sum()) # to assign -1 with new labels
+    print("#cluster: {}".format(len(np.unique(pred_with_singular))))
     print("End time: {}".format(datetime.datetime.now().strftime("%m-%d %H:%M:%S")))
 
     if args.evaluate:
         if not os.path.isfile("data/unlabeled/{}/meta.txt".format(args.data)):
             raise Exception("Meta file not exist, please remove argument \"evaluate\" or create meta file: {}".format("data/unlabeled/{}/meta.txt".format(args.data)))
         with open("data/unlabeled/{}/meta.txt".format(args.data), 'r') as f:
-            meta = f.readlines()
-        meta = np.array([int(l.strip()) for l in meta])
-        print('prec / recall / fscore: {:.4g}, {:.4g}, {:.4g}'.format(*eval_cluster.fscore(meta, labels)))
+            label = f.readlines()
+        label = np.array([int(l.strip()) for l in label])
+        print('prec / recall / fscore: {:.4g}, {:.4g}, {:.4g}'.format(*eval_cluster.fscore(label, pred_with_singular)))
 
     print("time: {:.2f} s".format(time.time() - start))

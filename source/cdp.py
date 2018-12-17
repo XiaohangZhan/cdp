@@ -121,7 +121,7 @@ def cdp(args):
 
         # clustering evaluation
         pred_with_singular = pred.copy()
-        pred_with_singular[np.where(pred == -1)] = np.arange(num_class, num_class + (pred == -1).sum())
+        pred_with_singular[np.where(pred == -1)] = np.arange(num_class, num_class + (pred == -1).sum()) # to assign -1 with new labels
         log('(singular removed) prec / recall / fscore: {:.4g}, {:.4g}, {:.4g}'.format(*eval_cluster.fscore(label[valid], pred[valid])))
         log('(singular kept) prec / recall / fscore: {:.4g}, {:.4g}, {:.4g}'.format(*eval_cluster.fscore(label, pred_with_singular)))
 

@@ -139,11 +139,11 @@ Project Page:
     | * Spectral (ncluster=2577)            | 2577      | 97.42, 97.05, 97.24  | 12.1h      |
     | * HAC (ncluster=2577, knn=30)         | 2577      | 97.74, 88.02, 92.62  | 5.65h      |
     | FastHAC (distance=0.7, method=single) | 46767     | 99.79, 53.18, 69.38  | 1.66h      |
-    | DBSCAN (eps=0.75, nim_samples=10)     | 2330      | 0.6775, 73.77, 1.343 | 6.87h      |
-    | HDBSCAN (min_samples=10)              | 2516      | 2.214, 79.87, 4.308  | 4.87h      |
-    | KNN DBSCAN (knn=80, min_samples=10)   | 2494      | 1.358, 78.99, 2.669  | 60.5s      |
+    | DBSCAN (eps=0.75, nim_samples=10)     | 52813     | 99.52, 65.52, 79.02  | 6.87h      |
+    | HDBSCAN (min_samples=10)              | 31354     | 99.35, 75.99, 86.11  | 4.87h      |
+    | KNN DBSCAN (knn=80, min_samples=10)   | 39266     | 97.54, 74.42, 84.43  | 60.5s      |
     | ApproxRankOrder (knn=20, th=10)       | 85150     | 52.96, 16.93, 25.66  | 86.4s      |
-
+    
     * emore_u600k
 
     | method                                | #clusters | prec, recall, fscore | total time |
@@ -151,14 +151,14 @@ Project Page:
     | * kmeans (ncluster=8436)              | 8436      | fail (out of memory) | -          |
     | * MiniBatchKMeans (ncluster=8436)     | 8436      |                      |            |
     | * Spectral (ncluster=8436)            | 8436      |                      |            |
-    | * HAC (ncluster=8436, knn=30)         | 8436      |                      |            |
+    | * HAC (ncluster=8436, knn=30)         | 8436      | 95.39, 86.28, 90.6   | 60.9h      |
     | FastHAC (distance=0.7, method=single) | 94949     | 98.75, 68.49, 80.88  | 16.3h      |
     | DBSCAN (eps=0.75, nim_samples=10)     |           |                      |            |
-    | HDBSCAN (min_samples=10)              |           |                      |            |
-    | KNN DBSCAN (knn=80, min_samples=10)   | 8006      | 0.2997, 76.8, 0.5972 | 644.5s     |
+    | HDBSCAN (min_samples=10)              | 124279    | 99.01, 69.31, 81.54  | 47.9h      |
+    | KNN DBSCAN (knn=80, min_samples=10)   | 133061    | 96.6, 70.97, 81.82   | 644.5s     |
     | ApproxRankOrder (knn=30, th=10)       | 304022    | 65.56, 8.139, 14.48  | 626.9s     |
 
-    note: Methods marked * are reported with their theoretical upper bound results, since they need number of clusters as input. We use the values from the ground truth to obtain the results. For each method, we adjust the parameters to achieve the best performance.
+    Note: Methods marked * are reported with their theoretical upper bound results, since they need number of clusters as input. We use the values from the ground truth to obtain the results. For each method, we adjust the parameters to achieve the best performance.
 
 3. CDP
 
@@ -189,7 +189,7 @@ Project Page:
     | mediator | 5      | k15_110_th0.99     | 93.67, 84.43, 88.81  | 967.0s   | 406.9s       | 1373.9s    |
     | mediator | 5      | k15_111_th0.982    | 95.29, 90.97, 93.08  | 967.0s   | 584.7s       | 1551.7s    |   
 
-    note: ;
+    Note:
     * For mediator, `110` means using `relationship` and `affinity`; `111` means using `relationship`, `affinity` and `structure`.
 
 ### Bibtex
