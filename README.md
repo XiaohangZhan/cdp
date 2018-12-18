@@ -149,13 +149,13 @@ Project Page:
     | method                                | #clusters | prec, recall, fscore | total time |
     |---------------------------------------|-----------|----------------------|------------|
     | * kmeans (ncluster=8436)              | 8436      | fail (out of memory) | -          |
-    | * MiniBatchKMeans (ncluster=8436)     | 8436      |                      |            |
-    | * Spectral (ncluster=8436)            | 8436      |                      |            |
-    | * HAC (ncluster=8436, knn=30)         | 8436      | 95.39, 86.28, 90.6   | 60.9h      |
+    | * MiniBatchKMeans (ncluster=8436)     | 8436      | 81.64, 86.58, 84.04  | 2265.6s    |
+    | * Spectral (ncluster=8436)            | 8436      | fail (out of memory) | -          |
+    | * HAC (ncluster=8436, knn=30)         | 8436      | 95.39, 86.28, 90.60  | 60.9h      |
     | FastHAC (distance=0.7, method=single) | 94949     | 98.75, 68.49, 80.88  | 16.3h      |
-    | DBSCAN (eps=0.75, nim_samples=10)     |           |                      |            |
+    | DBSCAN (eps=0.75, nim_samples=10)     | 174886    | 99.02, 61.95, 76.22  | 79.6h      |
     | HDBSCAN (min_samples=10)              | 124279    | 99.01, 69.31, 81.54  | 47.9h      |
-    | KNN DBSCAN (knn=80, min_samples=10)   | 133061    | 96.6, 70.97, 81.82   | 644.5s     |
+    | KNN DBSCAN (knn=80, min_samples=10)   | 133061    | 96.60, 70.97, 81.82  | 644.5s     |
     | ApproxRankOrder (knn=30, th=10)       | 304022    | 65.56, 8.139, 14.48  | 626.9s     |
 
     Note: Methods marked * are reported with their theoretical upper bound results, since they need number of clusters as input. We use the values from the ground truth to obtain the results. For each method, we adjust the parameters to achieve the best performance.
@@ -180,7 +180,7 @@ Project Page:
     | mediator | 5      | k15_110_th0.985     | 90.43, 89.13, 89.78  | 309.4s   | 184.2s       | 493.6s     |
     | mediator | 5      | k15_111_th0.982     | 96.55, 91.98, 94.21  | 309.4s   | 246.3s       | 555.7s     |
 
-    * emore_u1.6m
+    * emore_u1.4m
 
     | strategy | #model | setting            | prec, recall, fscore | knn time | cluster time | total time |
     |----------|--------|--------------------|----------------------|----------|--------------|------------|

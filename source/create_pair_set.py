@@ -34,15 +34,27 @@ def get_affinity_feat(features, pairs):
     log('\t\taffinity feature done. time: {}'.format(time.time() - start))
     return np.concatenate(cosine_simi, axis=1)
 
-def intersection(array1, array2):
+def intersection(array1, array2, trunk=-1):
     '''
     To find row wise intersection size.
-    Input: array1, array2: Nxk np array
+    Input:  array1, array2: Nxk np array
+            trunk: if out of memory, set trunk to be smaller, e.g., 100000; 
+                    note than small trunk will increase the processing time.
     '''
     N, k = array1.shape
-    tile1 = np.tile(array1.reshape(N, k, 1), (1, 1, k))
-    tile2 = np.tile(array2.reshape(N, 1, k), (1, k, 1))
-    inter_num = ((tile1 == tile2) & (tile1 != -1) & (tile2 != -1)).sum(axis=(1,2))
+    if trunk == -1:
+        tile1 = np.tile(array1.reshape(N, k, 1), (1, 1, k))
+        tile2 = np.tile(array2.reshape(N, 1, k), (1, k, 1))
+        inter_num = ((tile1 == tile2) & (tile1 != -1) & (tile2 != -1)).sum(axis=(1,2))
+    else:
+        inter_num = []
+        for i in range(0, N, trunk):
+            end = min((i + 1) * trunk, N)
+            L = end - i
+            tile1 = np.tile(array1[i:end].reshape(L, k, 1), (1, 1, k))
+            tile2 = np.tile(array2[i:end].reshape(L, 1, k), (1, k, 1))
+            inter_num.append(((tile1 == tile2) & (tile1 != -1) & (tile2 != -1)).sum(axis=(1,2)))
+        inter_num = np.concatenate(inter_num, axis=0)
     return inter_num
 
 def get_structure_feat(members, pairs):
