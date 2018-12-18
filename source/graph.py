@@ -72,6 +72,7 @@ def connected_components_constraint(nodes, max_sz, score_dict=None, th=None):
                 break
         if valid: # if this group is smaller than or equal to `max_sz`, finalize it.
             result.append(group)
+    #print("\tth: {}, remain: {}".format(th, len(remain)))
     return result, remain
 
 def graph_propagation(edges, score, max_sz, step=0.1):
@@ -97,10 +98,16 @@ def graph_propagation(edges, score, max_sz, step=0.1):
 
     # iteration
     components = comps[:]
+    Iter = 0
     while remain:
         th = th + (1 - th) * step
         comps, remain = connected_components_constraint(remain, max_sz, score_dict, th)
         components.extend(comps)
+        Iter += 1
+        if Iter >= 100:
+            print("\t Force stopping at: th {}, remain {}".format(th, len(remain)))
+            components.append(remain)
+            remain = {}
     return components
 
 def graph_propagation_soft(edges, score, max_sz, step=0.1, **kwargs):

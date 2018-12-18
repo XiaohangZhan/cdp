@@ -49,7 +49,7 @@ def intersection(array1, array2, trunk=-1):
     else:
         inter_num = []
         for i in range(0, N, trunk):
-            end = min((i + 1) * trunk, N)
+            end = min(i + trunk, N)
             L = end - i
             tile1 = np.tile(array1[i:end].reshape(L, k, 1), (1, 1, k))
             tile2 = np.tile(array2[i:end].reshape(L, 1, k), (1, k, 1))
