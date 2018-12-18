@@ -126,6 +126,7 @@ Project Page:
     * emore_u200k (images: 200K, identities: 2,577)
     * emore_u600k (images: 600K, identities: 8,436)
     * emore_u1.4m (images: 1.4M, identities: 21,433)
+
     (These datasets are not the one in the paper which cannot be released, but the relative results are similar.)
 
 2. Baselines
