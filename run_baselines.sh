@@ -1,4 +1,5 @@
 #!/bin/bash
+# --method in ['kmeans', 'mini_batch_kmeans', 'spectral', 'hierarchy', 'fast_hierarchy', 'dbscan', 'hdbscan', 'knn_dbscan', 'approx_rank_order']
 python -u tools/baseline_clustering.py \
     --data emore_u200k \
     --feature nas \
