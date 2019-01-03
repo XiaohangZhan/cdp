@@ -6,7 +6,7 @@ python -u tools/baseline_clustering.py \
     --feat-dim 256 \
     --method kmeans \
     --ncluster 2577 \
-    --knn 15 \
+    --knn 80 \
     --aro-th 100 \
     --batch-size 200 \
     --evaluate

@@ -7,8 +7,8 @@ import time
 import sklearn.cluster as cluster
 import multiprocessing
 import sys
-sys.path.append("source")
-import eval_cluster
+sys.path.append(".")
+from source import eval_cluster
 
 import pdb
 
@@ -164,8 +164,10 @@ if __name__ == '__main__':
     ofn_prefix = 'baseline_output/{}_{}_'.format(args.data, args.method)
     print("Method: {}".format(args.method))
 
-    if args.method == 'dbscan' or args.method == 'knn_dbscan':
+    if args.method == 'dbscan':
         ofn = ofn_prefix + 'eps_{}_min_{}/meta.txt'.format(args.eps, args.min_samples)
+    elif args.method == 'knn_dbscan':
+        ofn = ofn_prefix + 'knn_{}_eps_{}_min_{}/meta.txt'.format(args.knn, args.eps, args.min_samples)
     elif args.method == 'hdbscan':
         ofn = ofn_prefix + 'min_{}/meta.txt'.format(args.min_samples)
     elif args.method == 'fast_hierarchy':
@@ -199,6 +201,20 @@ if __name__ == '__main__':
             from scipy.sparse import csr_matrix
             # load knn and construct sparse mat
             knn_fn = 'data/unlabeled/{}/knn/{}_k{}.npz'.format(args.data, args.feature, args.knn)
+
+            if not os.path.isfile(knn_fn):
+                from source.knn import load_feats, knn_nmslib, fill_array
+                feats = load_feats('data/unlabeled/{}/features/{}.bin'.format(args.data, args.feature), args.feat_dim)
+                print("\n\tSearch KNN for {}".format(args.feature))
+                neighbours = knn_nmslib(feats, args.knn)
+                length = np.array([len(n[0]) for n in neighbours])
+                tofill = np.where(length < args.knn)[0]
+                for idx in tofill:
+                    neighbours[idx] = [fill_array(neighbours[idx][0], -1, args.knn), fill_array(neighbours[idx][1], -1., args.knn)]
+                knn_idx = np.array([n[0] for n in neighbours])
+                knn_dist = np.array([n[1] for n in neighbours])
+                np.savez(knn_fn, idx=knn_idx, dist=knn_dist)
+
             knn_file = np.load(knn_fn)
             knn_idx, knn_dist = knn_file['idx'], knn_file['dist']
             row, col, data = [], [], []
