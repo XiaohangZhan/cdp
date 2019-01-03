@@ -28,11 +28,15 @@ def main():
 
     with open(args.config, 'r') as f:
         config_str = f.read()
+
+    log("############# config #############")
     log(config_str)
+    log("##################################")
 
     assert isinstance(args.committee, list), "committee should be a list of strings"
 
     start = time.time()
+    log("\n------------- Progress --------------")
     if args.strategy == "mediator":
         create_knn(args, args.mediator['train_data_name'])
     create_knn(args, args.data_name)

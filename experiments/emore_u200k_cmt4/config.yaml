@@ -7,7 +7,7 @@ feat_dim: 256
 
 # adjustable paramters
 k: 15
-strategy: mediator # vote or mediator
+strategy: vote # vote or mediator
 vote:
     accept_num: 4 # <= len(committee), not applicable if len(committee) == 0
     threshold: 0.605 # recommended range: [0.3, 0.8], lower threshold --> higher recall and lower prec
