@@ -104,7 +104,7 @@ Project Page:
     ```
 
 7. Tips for paramters adjusting
-    * Modify `threshold` to obtain roughly closed `precision` and `recall` to achieve higher `fscore`.
+    * Modify `threshold` to obtain roughly balanced `precision` and `recall` to achieve higher `fscore`.
     * Higher threshold results in higher precision and lower recall.
     * Larger `max_sz` results in lower precision and higher recall.
 
