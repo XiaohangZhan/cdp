@@ -158,7 +158,7 @@ Project Page:
 
     Note: Methods marked * are reported with their theoretical upper bound results, since they need number of clusters as input. We use the values from the ground truth to obtain the results. For each method, we adjust the parameters to achieve the best performance.
 
-3. CDP
+3. CDP (in linear time !!!)
 
     * emore_u200k
 
