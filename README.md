@@ -27,7 +27,7 @@ Project Page:
 
 #### Using ready-made data
 
-1. Download the data [here](https://drive.google.com/open?id=1Fs8oN1JiGJRC93TkfDV-PaCeXQz-Htea) to the repo root, and uncompress it.
+1. Download the data from [Google Drive](https://drive.google.com/open?id=1Fs8oN1JiGJRC93TkfDV-PaCeXQz-Htea) or [Baidu Yun](https://pan.baidu.com/s/15A6SL7JFIQaozUIEhtekxQ) with passwd `u8vz` , to the repo root, and uncompress it.
 
     ```shell
     tar -xf data.tar.gz
