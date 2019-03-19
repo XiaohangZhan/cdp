@@ -78,6 +78,8 @@ def cdp(args):
     else:
         pairs, scores = groundtruth(args)
     log("\tpair num: {}".format(len(pairs)))
+    if len(pairs) == 0:
+        raise Exception('No positive pair is discovered, please decrease the threshold.')
 
     # propagation
     log("Propagation ...")
