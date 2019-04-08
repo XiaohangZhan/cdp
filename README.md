@@ -194,7 +194,7 @@ Project Page:
 ```
 @inproceedings{zhan2018consensus,
   title={Consensus-Driven Propagation in Massive Unlabeled Data for Face Recognition},
-  author={Zhan, Xiaohang and Liu, Ziwei and Yan, Junjie and Lin, Dahua and Change Loy, Chen},
+  author={Zhan, Xiaohang and Liu, Ziwei and Yan, Junjie and Lin, Dahua and Loy, Chen Change},
   booktitle={Proceedings of the European Conference on Computer Vision (ECCV)},
   pages={568--583},
   year={2018}
