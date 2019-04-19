@@ -108,6 +108,17 @@ Project Page:
     * Higher threshold results in higher precision and lower recall.
     * Larger `max_sz` results in lower precision and higher recall.
 
+### Simple API
+
+* This is a simple API for CDP with single model. Example:
+    ```python
+    from simple_api import CDP
+    cdp = CDP(15, 0.66, metric='cosine', max_sz=600)
+    cdp.fit(X) # X: Nxd features array
+    print cdp.labels_ # samples labeled -1 are discarded
+    ```
+* Note that this is equivalent to `experiments/emore_u200k_single/config.yaml`. However, this API should be easier to use, and more metrics are supported, including cosine, euclidean, minkowski, l1, etc.
+
 ### Run Baselines
 
 * We also implement several baseline clustering methods including: KMeans, MiniBatch-KMeans, Spectral, Hierarchical Agglomerative Clustering (HAC), FastHAC, DBSCAN, HDBSCAN, KNN DBSCAN, Approximate Rank-Order.
