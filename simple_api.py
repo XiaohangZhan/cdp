@@ -4,6 +4,19 @@ from sklearn.neighbors import NearestNeighbors
 
 class CDP(object):
     def __init__(self, k, th, metric='minkowski', max_sz=1000, step=0.05, debug_info=False):
+        '''
+        k: k in KNN searching.
+        th: threshold, (0, 1)
+        metric: choose one from [
+            'cityblock', 'cosine', 'euclidean', 'l1', 'l2', 'manhattan',
+            'braycurtis', 'canberra', 'chebyshev', 'correlation', 'dice',
+            'hamming', 'jaccard', 'kulsinski', 'mahalanobis', 'minkowski',
+            'rogerstanimoto', 'russellrao', 'seuclidean', 'sokalmichener',
+            'sokalsneath', 'sqeuclidean', 'yule']
+        max_sz: maximal size of a cluster
+        step: the step to increase the threshold
+        debug_info: switch on debug mode when more detailed informations will be printed
+        '''
         self.k = k
         self.th = th
         self.metric = metric
