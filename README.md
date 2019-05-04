@@ -76,7 +76,7 @@ Project Page:
     mkdir data/unlabeled/mydata
     ```
 
-2. Prepare your data list as `list.txt` and copy it to the directory.
+2. Prepare your data list as `list.txt` and copy it to the directory. If the data is not along with a list file, just make a dummy one, and make sure the length of the list is equal to the number of examples.
 
 3. (optional) If you want to evaluate the performance on your data, prepare the meta file as `meta.txt` and copy it to the directory.
 

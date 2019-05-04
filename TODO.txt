@@ -1,0 +1,3 @@
+1. remove the requirement of a list file.
+2. knn search for l2 distance
+3. a simple api
