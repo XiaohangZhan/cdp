@@ -75,8 +75,10 @@ def cdp(args):
         pairs, scores = vote(output_cdp, args)
     elif args.strategy == 'mediator':
         pairs, scores = mediator(args)
-    else:
+    elif args.strategy == 'groundtruth': # only for debug
         pairs, scores = groundtruth(args)
+    else:
+        raise Exception("No such strategy: {}".format(args.strategy))
     log("\tpair num: {}".format(len(pairs)))
     if len(pairs) == 0:
         raise Exception('No positive pair is discovered, please decrease the threshold.')

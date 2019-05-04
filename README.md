@@ -188,8 +188,11 @@ Project Page:
     | mediator | 5      | k15_111_th0.982    | 95.29, 90.97, 93.08  | 967.0s   | 584.7s       | 1551.7s    |   
 
     Note:
+
     * For mediator, `110` means using `relationship` and `affinity`; `111` means using `relationship`, `affinity` and `structure`.
+
     * The results may not be exactly reproduced, because there is randomness in knn search by NMSLIB.
+
     * Experiments are performed on a server with 48 CPU cores, 8 TITAN XP, 252G memory.
 
 ### Bibtex
