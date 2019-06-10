@@ -28,8 +28,8 @@ def dump2json(ofn, data, force=False):
     with open(ofn, 'w') as of:
         json.dump(data, of, default=default)
 
-def knn_nmslib(feats, k):
-    index = nmslib.init(method='hnsw', space='cosinesimil')
+def knn_nmslib(feats, k, space='consinesimil'):
+    index = nmslib.init(method='hnsw', space=space)
     index.addDataPointBatch(feats)
     index.createIndex({'post': 2}, print_progress=True)
     neighbours = index.knnQueryBatch(feats, k=k, num_threads=multiprocessing.cpu_count())

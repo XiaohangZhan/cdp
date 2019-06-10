@@ -108,6 +108,29 @@ Project Page:
     * Higher threshold results in higher precision and lower recall.
     * Larger `max_sz` results in lower precision and higher recall.
 
+#### Using single model API for generic clustering
+    ```shell
+    # an example
+    python -u test_api.py
+    ```
+    Note: The example is equivalent to using `experiments/emore_u200k_single/config.yaml`. However, it is easier to use if you prefer single model version of CDP. With this API, you can perform generic clustering on your own data with plenty of metrics to choose.
+
+#### Using isoloated pair-to-cluster function
+
+    ```python
+    # This function convert pairs into clusters with extremely high efficiency.
+    # pairs: numpy array (N,2) containing indices of pairs, N: number of pairs
+    # scores: numpy array (N,) containing edge score of each pair
+    # max_sz: maximal size of a cluster
+    # step: the step to adjust threshold, default: 0.05
+    from source import graph
+    import numpy as np
+    num = len(np.unique(pairs.flatten()))
+    components = graph.graph_propagation(pairs, scores, max_sz, step)
+    cluster = [[n.name for n in c] for c in components]
+    assert sum([len(c) for c in cluster]) == num, "Fatal error: some samples missing, please report to the author: xiaohangzhan@outlook.com"
+    ```
+
 ### Run Baselines
 
 * We also implement several baseline clustering methods including: KMeans, MiniBatch-KMeans, Spectral, Hierarchical Agglomerative Clustering (HAC), FastHAC, DBSCAN, HDBSCAN, KNN DBSCAN, Approximate Rank-Order.
