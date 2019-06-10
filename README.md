@@ -1,13 +1,13 @@
 # Implementation of "Consensus-Driven Propagation in Massive Unlabeled Data for Face Recognition" (CDP)
 
-### Paper
+## Paper
 
 Xiaohang Zhan, Ziwei Liu, Junjie Yan, Dahua Lin, Chen Change Loy, ["Consensus-Driven Propagation in Massive Unlabeled Data for Face Recognition"](http://openaccess.thecvf.com/content_ECCV_2018/papers/Xiaohang_Zhan_Consensus-Driven_Propagation_in_ECCV_2018_paper.pdf), ECCV 2018
 
 Project Page:
 [link](http://mmlab.ie.cuhk.edu.hk/projects/CDP/)
 
-### Dependency
+## Dependency
 
 * Please use python3, as we cannot guarantee its compatibility with python2.
 * The version of PyTorch we use is 0.3.1.
@@ -17,7 +17,7 @@ Project Page:
     pip install nmslib
     ```
 
-### Usage
+## Usage
 0. Clone the repo.
 
     ```shell
@@ -25,7 +25,7 @@ Project Page:
     cd cdp
     ```
 
-#### Using ready-made data
+### Using ready-made data
 
 1. Download the data from [Google Drive](https://drive.google.com/open?id=1Fs8oN1JiGJRC93TkfDV-PaCeXQz-Htea) or [Baidu Yun](https://pan.baidu.com/s/15A6SL7JFIQaozUIEhtekxQ) with passwd `u8vz` , to the repo root, and uncompress it.
 
@@ -68,7 +68,7 @@ Project Page:
 
     Take `Multi-model mediator case` for example, the results are stored in `experiments/emore_u200k_cmt4/output/k15_mediator_111_th0.9915/sz600_step0.05/meta.txt`. The order is the same as that in `data/unlabeled/emore_u200k/list.txt`. The samples labeled as `-1` are discarded by CDP. You may assign them with new unique labels if you must use them.
 
-#### Using your own data
+### Using your own data
 
 1. Create your data directory, e.g. `mydata`
 
@@ -108,14 +108,14 @@ Project Page:
     * Higher threshold results in higher precision and lower recall.
     * Larger `max_sz` results in lower precision and higher recall.
 
-#### Using single model API for generic clustering
+### Using single model API for generic clustering
     ```shell
     # an example
     python -u test_api.py
     ```
     Note: The example is equivalent to using `experiments/emore_u200k_single/config.yaml`. However, it is easier to use if you prefer single model version of CDP. With this API, you can perform generic clustering on your own data with plenty of metrics to choose.
 
-#### Using isoloated pair-to-cluster function
+### Using isoloated pair-to-cluster function
 
     ```python
     # This function convert pairs into clusters with extremely high efficiency.
@@ -131,7 +131,7 @@ Project Page:
     assert sum([len(c) for c in cluster]) == num, "Fatal error: some samples missing, please report to the author: xiaohangzhan@outlook.com"
     ```
 
-### Run Baselines
+## Run Baselines
 
 * We also implement several baseline clustering methods including: KMeans, MiniBatch-KMeans, Spectral, Hierarchical Agglomerative Clustering (HAC), FastHAC, DBSCAN, HDBSCAN, KNN DBSCAN, Approximate Rank-Order.
 
@@ -139,7 +139,7 @@ Project Page:
     sh run_baselines.sh # results stored in `baseline_output/`
     ```
 
-### Evaluation Results
+## Evaluation Results
 
 1. Data
     
@@ -218,7 +218,7 @@ Project Page:
 
     * Experiments are performed on a server with 48 CPU cores, 8 TITAN XP, 252G memory.
 
-### Bibtex
+## Bibtex
 ```
 @inproceedings{zhan2018consensus,
   title={Consensus-Driven Propagation in Massive Unlabeled Data for Face Recognition},
