@@ -110,17 +110,18 @@ Project Page:
 
 ### Using single model API for generic clustering
 
+* The example is equivalent to using `experiments/emore_u200k_single/config.yaml`. However, it is easier to use if you prefer single model version of CDP. With this API, you can perform generic clustering on your own data with plenty of metrics to choose.
+
     ```sh
     # an example
     python -u test_api.py
     ```
-    
-    Note: The example is equivalent to using `experiments/emore_u200k_single/config.yaml`. However, it is easier to use if you prefer single model version of CDP. With this API, you can perform generic clustering on your own data with plenty of metrics to choose.
 
 ### Using isoloated pair-to-cluster function
 
+* This function converts pairs into clusters with extremely high efficiency.
+
     ```python
-    # This function convert pairs into clusters with extremely high efficiency.
     # pairs: numpy array (N,2) containing indices of pairs, N: number of pairs
     # scores: numpy array (N,) containing edge score of each pair
     # max_sz: maximal size of a cluster
