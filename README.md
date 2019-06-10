@@ -1,11 +1,17 @@
 # Implementation of "Consensus-Driven Propagation in Massive Unlabeled Data for Face Recognition" (CDP)
 
-## Paper
+## Introduction
 
-Xiaohang Zhan, Ziwei Liu, Junjie Yan, Dahua Lin, Chen Change Loy, ["Consensus-Driven Propagation in Massive Unlabeled Data for Face Recognition"](http://openaccess.thecvf.com/content_ECCV_2018/papers/Xiaohang_Zhan_Consensus-Driven_Propagation_in_ECCV_2018_paper.pdf), ECCV 2018
+Original paper: Xiaohang Zhan, Ziwei Liu, Junjie Yan, Dahua Lin, Chen Change Loy, ["Consensus-Driven Propagation in Massive Unlabeled Data for Face Recognition"](http://openaccess.thecvf.com/content_ECCV_2018/papers/Xiaohang_Zhan_Consensus-Driven_Propagation_in_ECCV_2018_paper.pdf), ECCV 2018
 
 Project Page:
-[link](http://mmlab.ie.cuhk.edu.hk/projects/CDP/)
+[http://mmlab.ie.cuhk.edu.hk/projects/CDP/](http://mmlab.ie.cuhk.edu.hk/projects/CDP/)
+
+You can use this code for:
+
+1. State-of-the-art face clustering in linear complexity.
+2. High efficiency generic clustering.
+3. Plugging the pair-to-cluster module into your clustering algorithm.
 
 ## Dependency
 
@@ -25,7 +31,7 @@ Project Page:
     cd cdp
     ```
 
-### Using ready-made data
+### Using ready-made data for face clustering
 
 1. Download the data from [Google Drive](https://drive.google.com/open?id=1Fs8oN1JiGJRC93TkfDV-PaCeXQz-Htea) or [Baidu Yun](https://pan.baidu.com/s/15A6SL7JFIQaozUIEhtekxQ) with passwd `u8vz` , to the repo root, and uncompress it.
 

@@ -9,7 +9,7 @@ metric = 'cosinesimil' # supported: 'cosinesimil', 'l1', 'l2', 'linf', 'angulard
 th_dict = {'cosinesimil': 0.54, 'l1': 0.2, 'l2': 0.2, 'angulardist': 0.35} # reference threshold for face data
 th = th_dict[metric]
 K = 15
-max_sz=600
+max_sz = 600
 step = 0.05
 
 # clustering
