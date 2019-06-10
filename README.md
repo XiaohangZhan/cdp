@@ -13,14 +13,14 @@ Project Page:
 * The version of PyTorch we use is 0.3.1.
 * Other depencencies:
 
-    ```
+    ```sh
     pip install nmslib
     ```
 
 ## Usage
 0. Clone the repo.
 
-    ```shell
+    ```sh
     git clone git@github.com:XiaohangZhan/cdp.git
     cd cdp
     ```
@@ -29,13 +29,13 @@ Project Page:
 
 1. Download the data from [Google Drive](https://drive.google.com/open?id=1Fs8oN1JiGJRC93TkfDV-PaCeXQz-Htea) or [Baidu Yun](https://pan.baidu.com/s/15A6SL7JFIQaozUIEhtekxQ) with passwd `u8vz` , to the repo root, and uncompress it.
 
-    ```shell
+    ```sh
     tar -xf data.tar.gz
     ```
 
 2. Make sure the structure looks like the following:
 
-    ```shell
+    ```sh
     cdp/data/
     cdp/data/labeled/emore_l200k/
     cdp/data/unlabeled/emore_u200k/
@@ -46,19 +46,19 @@ Project Page:
 
     * Single model case:
 
-        ```shell
+        ```sh
         python -u main.py --config experiments/emore_u200k_single/config.yaml
         ```
 
     * Multi-model voting case (committee size: 4):
 
-        ```shell
+        ```sh
         python -u main.py --config experiments/emore_u200k_cmt4/config.yaml
         ```
 
     * Multi-model mediator case (committee size: 4):
 
-        ```shell
+        ```sh
         # edit `experiments/emore_u200k_cmt4/config.yaml` as following:
         # strategy: mediator
         python -u main.py --config experiments/emore_u200k_cmt4/config.yaml
@@ -72,7 +72,7 @@ Project Page:
 
 1. Create your data directory, e.g. `mydata`
 
-    ```shell
+    ```sh
     mkdir data/unlabeled/mydata
     ```
 
@@ -84,7 +84,7 @@ Project Page:
 
 5. The structure should look like:
 
-    ```shell
+    ```sh
     cdp/data/unlabeled/mydata/
     cdp/data/unlabeled/mydata/list.txt
     cdp/data/unlabeled/mydata/meta.txt (optional)
@@ -96,7 +96,7 @@ Project Page:
 
 6. Prepare the config file. Please refer to the examples in `experiments/`
 
-    ```shell
+    ```sh
     mkdir experiments/myexp
     cp experiments/emore_u200k_cmt4/config.yaml experiments/myexp/
     # edit experiments/myexp/config.yaml to fit your case.
@@ -109,10 +109,12 @@ Project Page:
     * Larger `max_sz` results in lower precision and higher recall.
 
 ### Using single model API for generic clustering
-    ```shell
+
+    ```sh
     # an example
     python -u test_api.py
     ```
+    
     Note: The example is equivalent to using `experiments/emore_u200k_single/config.yaml`. However, it is easier to use if you prefer single model version of CDP. With this API, you can perform generic clustering on your own data with plenty of metrics to choose.
 
 ### Using isoloated pair-to-cluster function
@@ -135,7 +137,7 @@ Project Page:
 
 * We also implement several baseline clustering methods including: KMeans, MiniBatch-KMeans, Spectral, Hierarchical Agglomerative Clustering (HAC), FastHAC, DBSCAN, HDBSCAN, KNN DBSCAN, Approximate Rank-Order.
 
-    ```shell
+    ```sh
     sh run_baselines.sh # results stored in `baseline_output/`
     ```
 
