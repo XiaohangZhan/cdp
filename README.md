@@ -123,7 +123,7 @@ You can use this code for:
     python -u test_api.py
     ```
 
-### Using isoloated pair-to-cluster function
+### Using isoloated pair-to-cluster module
 
 * This function converts pairs into clusters with extremely high efficiency.
 
