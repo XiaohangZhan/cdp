@@ -1,17 +1,16 @@
 import numpy as np
-import nmslib
-from sklearn.neighbors import NearestNeighbors
 
 from source import cdp, graph, knn
-import pdb
+
 class CDP(object):
-    def __init__(self, k, th, metric='cosinesimil', max_sz=1000, step=0.05, debug_info=False):
+    def __init__(self, k, th, metric='cosinesimil', max_sz=1000, step=0.05, max_iter=100, debug_info=False):
         '''
         k: k in KNN searching.
         th: threshold, (0, 1)
         metric: choose one from ['cosinesimil']
         max_sz: maximal size of a cluster
         step: the step to increase the threshold
+        max_iter: maximal iteration in propagation
         debug_info: switch on debug mode when more detailed informations will be printed
         '''
         self.k = k
@@ -19,6 +18,7 @@ class CDP(object):
         self.metric = metric
         self.max_sz = max_sz
         self.step = step
+        self.max_iter = max_iter
         self.debug_info = debug_info
         assert metric in ['cosinesimil', 'l1', 'l2', 'linf', 'angulardist', 'bit_hamming']
 
@@ -41,7 +41,7 @@ class CDP(object):
         # propagation
         if self.debug_info:
             print("\nPropagation ...")
-        components = graph.graph_propagation(pairs, scores, self.max_sz, self.step)
+        components = graph.graph_propagation(pairs, scores, self.max_sz, self.step, self.max_iter)
 
         # collect results
         cdp_res = []

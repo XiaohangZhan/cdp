@@ -11,10 +11,11 @@ th = th_dict[metric]
 K = 15
 max_sz = 600
 step = 0.05
+max_iter = 100
 
 # clustering
 X = np.fromfile("data/unlabeled/emore_u200k/features/nas.bin", dtype=np.float32).reshape(-1, 256)
-cdp = CDP(K, th, metric=metric, max_sz=max_sz, step=step, debug_info=True)
+cdp = CDP(K, th, metric=metric, max_sz=max_sz, step=step, max_iter=max_iter, debug_info=True)
 cdp.fit(X)
 pred = cdp.labels_
 

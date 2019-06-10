@@ -85,7 +85,7 @@ def cdp(args):
 
     # propagation
     log("Propagation ...")
-    components = graph.graph_propagation(pairs, scores, args.propagation['max_sz'], args.propagation['step'])
+    components = graph.graph_propagation(pairs, scores, args.propagation['max_sz'], args.propagation['step'], args.propagation['max_iter'])
 
     # collect results
     cdp_res = []

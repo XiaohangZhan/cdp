@@ -20,5 +20,6 @@ mediator:
 propagation:
     max_sz: 600 # maximal number of images in a class
     step: 0.05 # step to increase threshold, usually don't need to adjust
+    max_iter: 100 # maximal iteration in propagation
 
 evaluation: True # set to False if no meta.txt provided for unlabeled data.

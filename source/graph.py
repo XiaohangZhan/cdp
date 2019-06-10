@@ -75,7 +75,7 @@ def connected_components_constraint(nodes, max_sz, score_dict=None, th=None):
     #print("\tth: {}, remain: {}".format(th, len(remain)))
     return result, remain
 
-def graph_propagation(edges, score, max_sz, step=0.1):
+def graph_propagation(edges, score, max_sz, step=0.1, max_iter=100):
 
     edges = np.sort(edges, axis=1)
     th = score.min()
@@ -104,8 +104,8 @@ def graph_propagation(edges, score, max_sz, step=0.1):
         comps, remain = connected_components_constraint(remain, max_sz, score_dict, th)
         components.extend(comps)
         Iter += 1
-        if Iter >= 100:
-            print("\t Force stopping at: th {}, remain {}".format(th, len(remain)))
+        if Iter >= max_iter:
+            print("Warning: The iteration reaches max_iter: {}. Force stopped at: th {}, remain {} for efficiency. If you do not want it to be force stopped, please increase max_iter or set it to np.inf".format(max_iter, th, len(remain)))
             components.append(remain)
             remain = {}
     return components
