@@ -2,12 +2,14 @@ import numpy as np
 
 from source import cdp, graph, knn
 
+import pdb
+
 class CDP(object):
     def __init__(self, k, th, metric='cosinesimil', max_sz=1000, step=0.05, max_iter=100, debug_info=False):
         '''
         k: k in KNN searching.
         th: threshold, (0, 1)
-        metric: choose one from ['cosinesimil']
+        metric: choose one from ['cosinesimil', 'l1', 'l2', 'angulardist']
         max_sz: maximal size of a cluster
         step: the step to increase the threshold
         max_iter: maximal iteration in propagation
@@ -34,7 +36,8 @@ class CDP(object):
         indices = np.array([n[0] for n in neighbours])
         distances = np.array([n[1] for n in neighbours])
 
-        distances = (distances - distances.min()) / (distances.max() - distances.min()) # normalized to 0-1
+        if self.metric != 'cosinesimil':
+            distances = distances / distances.max() # normalized to 0-1
 
         pairs, scores = cdp.sample((indices, distances), [], th=self.th)
 
