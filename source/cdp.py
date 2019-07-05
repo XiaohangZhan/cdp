@@ -136,6 +136,7 @@ def cdp(args):
     log('Writing to: {}'.format(outmeta))
     with open(outmeta, 'w') as f:
         f.writelines(new_label)
+    log("\n--------------- End -----------------")
 
 def vote(output, args):
     assert args.vote['accept_num'] <= len(args.committee)

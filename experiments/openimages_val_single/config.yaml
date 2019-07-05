@@ -6,13 +6,13 @@ data_name: "unlabeled/openimages_val" # data to peform clustering
 feat_dim: 2048
 
 # adjustable paramters
-k: 15
+k: 30
 strategy: vote # vote or mediator
 vote:
     accept_num: 0 # <= len(committee), not applicable if len(committee) == 0
-    threshold: 0.66 # usual range: [0.3, 0.8], lower threshold --> higher recall and lower prec
+    threshold: 0.3 # usual range: [0.3, 0.8], lower threshold --> higher recall and lower prec
 propagation:
-    max_sz: 600 # maximal number of images in a class
+    max_sz: 1000 # maximal number of images in a class
     step: 0.05 # step to increase threshold, usually don't need to adjust
     max_iter: 100 # maximal iteration in propagation
 
