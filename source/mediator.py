@@ -85,7 +85,7 @@ def train(cfg):
         model.train()
         for i, input in enumerate(train_loader):
             feature_var = torch.autograd.Variable(input[0].cuda())
-            label = input[1].cuda(async=True)
+            label = input[1].cuda()
             label_var = torch.autograd.Variable(label)
 
             output = model(feature_var)
