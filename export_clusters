@@ -1,0 +1,21 @@
+# This scripts allows you export clusters to different folders. in other words, each folder will have images of that cluster/label
+#
+import os 
+import shutil 
+
+path = os.getcwd() + '/data'
+meta = [s.strip() for s in open("meta.txt","r").readlines()]
+lis = [s.strip() for s in open("list.txt","r").readlines()]
+labels = list(set(meta)) 
+
+
+def getIndex(lst, item):
+    return [i for i, x in enumerate(lst) if x == item]
+
+for label in labels:
+    res_list = [lis[i] for i in getIndex(meta, str(label))]
+    if not os.path.exists(path + '/' + str(label)):
+        os.makedirs(path + '/' + str(label))
+    for i in range(len(res_list)):
+        image_path = res_list[i].split()[0]
+        shutil.copyfile(image_path, '{}/{}/{}'.format(path, label, os.path.basename(image_path)))
