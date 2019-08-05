@@ -227,6 +227,12 @@ You can use this code for:
 
     * Experiments are performed on a server with 48 CPU cores, 8 TITAN XP, 252G memory.
 
+## Face recognition framework
+
+You may use this framework to train/evaluate face recognition models and extract features.
+
+url: [https://github.com/XiaohangZhan/face_recognition_framework](https://github.com/XiaohangZhan/face_recognition_framework)
+
 ## Bibtex
 ```
 @inproceedings{zhan2018consensus,
