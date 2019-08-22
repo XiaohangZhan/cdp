@@ -86,7 +86,7 @@ You can use this code for:
 
 3. (optional) If you want to evaluate the performance on your data, prepare the meta file as `meta.txt` and copy it to the directory.
 
-4. Prepare your feature files. Extract face features corresponding to the `list.txt` with your trained face models, and save it as binary files via `feature.tofile("xxx.bin")` in numpy. The features should satisfy `Cosine Similarity` condition. Finally link/copy them to `data/unlabeled/mydata/features/`. We recommand renaming the feature files using model names, e.g., `resnet18.bin`. CDP works for single model case, but we recommend you to use multiple models (i.e., preparing multiple feature files extracted from different models) with `mediator` for better results.
+4. Prepare your feature files. Extract face features corresponding to the `list.txt` with your trained face recognition models, and save it as binary files via `feature.tofile("xxx.bin")` in numpy. The features should satisfy `Cosine Similarity` condition. Finally link/copy them to `data/unlabeled/mydata/features/`. We recommand renaming the feature files using model names, e.g., `resnet18.bin`. CDP works for single model case, but we recommend you to use multiple models (i.e., preparing multiple feature files extracted from different models) with `mediator` for better results.
 
 5. The structure should look like:
 
@@ -108,8 +108,9 @@ You can use this code for:
     # edit experiments/myexp/config.yaml to fit your case.
     # you may need to change `base`, `committee`, `data_name`, etc.
     ```
+7. If you want to use `mediator` mode, please also prepare the training set, i.e., the features extracted using the same face recognition model as step 4, as well as the meta file containing labels. Organize them in `data/labeled/mydata/` similarly to `data/labeled/emore_l200k/`.
 
-7. Tips for paramters adjusting
+8. Tips for paramters adjusting
     * Modify `threshold` to obtain roughly balanced `precision` and `recall` to achieve higher `fscore`.
     * Higher threshold results in higher precision and lower recall.
     * Larger `max_sz` results in lower precision and higher recall.
