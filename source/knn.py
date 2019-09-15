@@ -35,6 +35,20 @@ def knn_nmslib(feats, k, space='cosinesimil'):
     neighbours = index.knnQueryBatch(feats, k=k, num_threads=multiprocessing.cpu_count())
     return neighbours
 
+def knn_faiss(feats, k):
+    import torch
+    import faiss
+    import pdb
+    N, dim = feats.shape
+    res = faiss.StandardGpuResources()
+    feats /= np.linalg.norm(feats).reshape(-1, 1)
+    flat_config = faiss.GpuIndexFlatConfig()
+    flat_config.device = int(torch.cuda.device_count()) - 1
+    index = faiss.GpuIndexFlatL2(res, dim, flat_config)
+    index.add(feats)
+    D, I = index.search(feats, k + 1)
+    pdb.set_trace()
+
 def get_hist(topk):
     hist = {}
     for t in topk:
@@ -77,7 +91,12 @@ def create_knn(args, data_name):
             feats = load_feats('data/{}/features/{}.bin'.format(data_name, m), args.feat_dim)
             assert feats.shape[0] == args.total_num, "Feature length of [{}] not consistent with list file, {} vs {}".format(m, feats.shape[0], args.total_num)
             log("\n\tSearch KNN for {}".format(m))
-            neighbours = knn_nmslib(feats, args.k)
+            if not hasattr(args, 'knn_method') or args.knn_method == 'nmslib':
+                neighbours = knn_nmslib(feats, args.k)
+            elif args.knn_method == 'faiss':
+                neighbours = knn_faiss(feats, args.k)
+            else:
+                raise Exception("No such knn method: {}".format(args.knn_method))
 
             length = np.array([len(n[0]) for n in neighbours])
             tofill = np.where(length < args.k)[0]
